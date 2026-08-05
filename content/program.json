@@ -1,0 +1,238 @@
+{
+  "$schema_note": "Catalogue extrait du guide 'DailyRepsGuy — 20 min. Workout PDF' (docs/DailyRepsGuy-Workout-Guide.pdf). Source de vérité du contenu d'entraînement de l'app. Les noms d'exercices sont conservés en anglais (référence du guide) ; la traduction FR se fera via i18n.",
+  "version": 1,
+  "method": {
+    "sessionDurationMinutes": 20,
+    "format": "AMRAP",
+    "formatNote": "Circuit : enchaîner les mouvements et refaire autant de tours que possible dans le temps imparti.",
+    "restBetweenMovementsSeconds": { "min": 10, "max": 45 },
+    "movementsPerSession": {
+      "base": "1 mouvement par groupe musculaire (4 groupes), dans la phase courante du groupe",
+      "focus": "1 à 2 mouvements supplémentaires sur le groupe 'focus' du jour",
+      "total": "5 à 6 mouvements"
+    },
+    "phaseUpRuleOfThumb": "2 répétitions de plus sur la dernière série pendant 2 séances consécutives → suggérer le passage à la phase supérieure.",
+    "improvementSignal": "10 à 20 % de répétitions totales en plus dans le même temps → durcir la séance.",
+    "phaseUpCriteria": [
+      "Toutes les répétitions terminées avec aisance",
+      "Forme solide du début à la fin",
+      "Récupération rapide",
+      "Plus de courbatures/fatigue le lendemain",
+      "Plus de challenge mental"
+    ],
+    "microProgressions": ["tempo (descente lente)", "pause reps", "poids (kettlebell, sac à dos)", "volume (séries/reps)", "amplitude"],
+    "phasesIndependentPerMuscleGroup": true,
+    "exampleWeek": {
+      "monday": "focus armsChest",
+      "tuesday": "focus legs",
+      "wednesday": "rest",
+      "thursday": "focus abs",
+      "friday": "focus back",
+      "saturday": "circuit sans focus",
+      "sunday": "rest"
+    }
+  },
+  "muscleGroups": [
+    {
+      "id": "armsChest",
+      "nameEn": "Arms/Chest",
+      "nameFr": "Bras & Pectoraux",
+      "phases": [
+        {
+          "phase": 1,
+          "label": "Beginner",
+          "exercises": [
+            { "id": "kneeling-pushups", "name": "Kneeling Push-Ups", "note": "reduce load, build form" },
+            { "id": "chair-dips", "name": "Chair Dips", "note": "use sturdy chair, feet closer = easier" },
+            { "id": "backpack-bicep-curls", "name": "Bicep Curls (Backpack)", "note": "fill with books" },
+            { "id": "incline-pushups", "name": "Incline Push-Ups", "note": "hands on counter or couch" }
+          ]
+        },
+        {
+          "phase": 2,
+          "label": "Intermediate",
+          "exercises": [
+            { "id": "standard-pushups", "name": "Standard Push-Ups" },
+            { "id": "close-grip-pushups", "name": "Close-Grip Push-Ups", "note": "triceps emphasis" },
+            { "id": "kb-floor-press", "name": "Kettlebell Floor Press", "note": "one or two hands" },
+            { "id": "decline-pushups", "name": "Decline Push-Ups", "note": "feet on chair" },
+            { "id": "feet-elevated-dips", "name": "Feet-Elevated Dips", "note": "chair behind + feet on another chair" },
+            { "id": "diamond-pushups", "name": "Diamond Push-Ups" },
+            { "id": "pike-pushups-ac", "name": "Pike Push-Ups" },
+            { "id": "kb-shoulder-press", "name": "Kettlebell Shoulder Press" },
+            { "id": "chin-ups-ac", "name": "Chin-Ups" }
+          ]
+        },
+        {
+          "phase": 3,
+          "label": "Advanced",
+          "exercises": [
+            { "id": "explosive-pushups", "name": "Explosive Push-Ups / Clap Push-Ups" },
+            { "id": "archer-pushups", "name": "Archer Push-Ups" },
+            { "id": "kb-pushup-rows", "name": "Kettlebell Push-Up Rows", "note": "push-up → row → alternate" },
+            { "id": "bw-dips", "name": "Bodyweight Dips", "note": "with dip bars/parallel bars" },
+            { "id": "deficit-pushups", "name": "Deficit Push-Ups" },
+            { "id": "kb-clean-to-press", "name": "Kettlebell Clean to Press" },
+            { "id": "handstand-pushups-ac", "name": "Handstand Push-Ups" },
+            { "id": "tension-pushups", "name": "Tension Push-Ups", "note": "hold at the bottom 5–30s OR slow down 4–8s and quick up" }
+          ]
+        },
+        {
+          "phase": 4,
+          "label": "Pro",
+          "rule": "Add weight to any of the Phase 3 movements (weighted vest or heavier kettlebell)."
+        }
+      ]
+    },
+    {
+      "id": "legs",
+      "nameEn": "Legs",
+      "nameFr": "Jambes",
+      "phases": [
+        {
+          "phase": 1,
+          "label": "Beginner",
+          "exercises": [
+            { "id": "bw-squats", "name": "Bodyweight Squats" },
+            { "id": "reverse-lunges", "name": "Reverse Lunges", "note": "bodyweight" },
+            { "id": "glute-bridges", "name": "Glute Bridges", "note": "bodyweight" },
+            { "id": "step-ups", "name": "Step-Ups", "note": "small step/chair" },
+            { "id": "calf-raises", "name": "Calf Raises", "note": "bodyweight" }
+          ]
+        },
+        {
+          "phase": 2,
+          "label": "Intermediate",
+          "exercises": [
+            { "id": "goblet-squat", "name": "Goblet Squat", "note": "kettlebell" },
+            { "id": "walking-lunges", "name": "Walking Lunges", "note": "weight optional" },
+            { "id": "single-leg-glute-bridge", "name": "Single-Leg Glute Bridge" },
+            { "id": "bulgarian-split-squats", "name": "Bulgarian Split Squats", "note": "chair" },
+            { "id": "jump-squats-p2", "name": "Jump Squats" },
+            { "id": "jump-lunges", "name": "Jump Lunges" },
+            { "id": "kb-swings-legs", "name": "Kettlebell Swings" }
+          ]
+        },
+        {
+          "phase": 3,
+          "label": "Advanced",
+          "exercises": [
+            { "id": "pistol-squat-progressions", "name": "Pistol Squat Progressions", "note": "box pistol, assisted, full" },
+            { "id": "kb-swing-p3", "name": "Kettlebell Swing" },
+            { "id": "jump-squats-p3", "name": "Jump Squats" },
+            { "id": "weighted-step-ups", "name": "Weighted Step-Ups", "note": "KB or backpack" },
+            { "id": "romanian-deadlifts", "name": "Romanian Dead Lifts (RDL)", "note": "with kettlebell or weight" },
+            { "id": "static-lunges-kb-pass", "name": "Static Lunges with Kettlebell Pass Through Legs" },
+            { "id": "weighted-glute-bridges", "name": "Glute Bridges", "note": "with kettlebell or weight" },
+            { "id": "kb-overhead-squats", "name": "Kettlebell Overhead Squats" },
+            { "id": "weighted-bulgarian-split-squats", "name": "Bulgarian Split Squats", "note": "with kettlebell or weight" }
+          ]
+        },
+        {
+          "phase": 4,
+          "label": "Pro",
+          "rule": "Add weight to any of the Phase 3 movements (weighted vest or heavier kettlebell)."
+        }
+      ]
+    },
+    {
+      "id": "abs",
+      "nameEn": "Abs",
+      "nameFr": "Abdominaux",
+      "phases": [
+        {
+          "phase": 1,
+          "label": "Beginner",
+          "exercises": [
+            { "id": "dead-bugs", "name": "Dead Bugs" },
+            { "id": "crunches", "name": "Crunches" },
+            { "id": "leg-raises-floor", "name": "Leg Raises", "note": "on floor" },
+            { "id": "plank-p1", "name": "Plank", "note": "20–30 sec", "type": "duration" },
+            { "id": "penguins", "name": "Penguins" }
+          ]
+        },
+        {
+          "phase": 2,
+          "label": "Intermediate",
+          "exercises": [
+            { "id": "v-ups", "name": "V-Ups" },
+            { "id": "hanging-knee-raises", "name": "Hanging Knee Raises", "note": "if doorway bar; otherwise tuck-ups" },
+            { "id": "side-planks", "name": "Side Planks", "note": "30–40 sec", "type": "duration" },
+            { "id": "russian-twists", "name": "Russian Twists", "note": "KB optional" },
+            { "id": "kb-marches", "name": "Kettlebell Marches" },
+            { "id": "plank-shoulder-taps", "name": "Plank Shoulder Taps" },
+            { "id": "mountain-climbers", "name": "Mountain Climbers" },
+            { "id": "kb-swings-abs", "name": "Kettlebell Swings" }
+          ]
+        },
+        {
+          "phase": 3,
+          "label": "Advanced",
+          "exercises": [
+            { "id": "hanging-leg-raises", "name": "Hanging Leg Raises", "note": "full" },
+            { "id": "toe-to-bar-progressions", "name": "Toe-to-Bar Progressions", "note": "knee → L-raise → toe-touch" },
+            { "id": "plank-walkouts", "name": "Plank Walk-Outs" },
+            { "id": "kb-situp-to-press", "name": "KB Sit-Up to Press" },
+            { "id": "kb-overhead-marches", "name": "Kettlebell Overhead Marches" },
+            { "id": "plank-p3", "name": "Planks", "note": "more than a minute, optional hip movement", "type": "duration" }
+          ]
+        },
+        {
+          "phase": 4,
+          "label": "Pro",
+          "rule": "Add weight to any of the Phase 3 movements (weighted vest or heavier kettlebell)."
+        }
+      ]
+    },
+    {
+      "id": "back",
+      "nameEn": "Back",
+      "nameFr": "Dos",
+      "phases": [
+        {
+          "phase": 1,
+          "label": "Beginner",
+          "exercises": [
+            { "id": "supermans", "name": "Supermans" },
+            { "id": "backpack-bent-over-rows", "name": "Backpack Bent-Over Rows" },
+            { "id": "reverse-snow-angels", "name": "Reverse Snow Angels" },
+            { "id": "doorway-isometric-pulls", "name": "Doorway Isometric Pulls", "note": "lean back + pull" },
+            { "id": "assisted-pullups", "name": "Pull-Ups/Chin-Ups", "note": "bands assisted" }
+          ]
+        },
+        {
+          "phase": 2,
+          "label": "Intermediate",
+          "exercises": [
+            { "id": "single-arm-rows", "name": "Single-Arm Rows", "note": "kettlebell" },
+            { "id": "hip-hinge-good-mornings", "name": "Hip Hinge / Good Mornings", "note": "backpack or bodyweight" },
+            { "id": "back-extensions", "name": "Back Extensions", "note": "bench or couch edge" },
+            { "id": "pike-pushups-back", "name": "Pike Push-Ups" },
+            { "id": "pull-ups", "name": "Pull-Ups" },
+            { "id": "chin-ups-back", "name": "Chin-Ups" },
+            { "id": "inverted-doorway-rows", "name": "Inverted Doorway Rows", "note": "towel around sturdy handle OR with dip bar/rings" }
+          ]
+        },
+        {
+          "phase": 3,
+          "label": "Advanced",
+          "exercises": [
+            { "id": "kb-renegade-rows", "name": "Kettlebell Renegade Rows" },
+            { "id": "kb-gorilla-rows", "name": "Kettlebell Gorilla Rows" },
+            { "id": "explosive-hip-hinges", "name": "Explosive Hip Hinges", "note": "KB" },
+            { "id": "weighted-supermans", "name": "Weighted Supermans", "note": "light backpack held overhead" },
+            { "id": "kb-clean-and-press", "name": "Kettlebell Clean and Press" },
+            { "id": "weighted-pullups", "name": "Pull-Ups/Chin-Ups with Weighted Vest" },
+            { "id": "handstand-pushups-back", "name": "Handstand Push-Ups" },
+            { "id": "inverted-rows", "name": "Inverted Rows", "note": "feet up on chair/bench, weighted vest optional" }
+          ]
+        },
+        {
+          "phase": 4,
+          "label": "Pro",
+          "rule": "Add weight to any of the Phase 3 movements (weighted vest or heavier kettlebell)."
+        }
+      ]
+    }
+  ]
+}

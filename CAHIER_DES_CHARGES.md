@@ -1,103 +1,119 @@
 # Cahier des charges — Application sportive gamifiée (Android)
 
-> **Version 0.1 — brouillon de cadrage.** Les sections marquées `⏳ EN ATTENTE`
-> dépendent du contenu du guide PDF, non encore fourni.
+> **Version 0.2** — le guide PDF a été analysé ; le contenu est extrait dans
+> `content/program.json` (source : `docs/DailyRepsGuy-Workout-Guide.pdf`).
 
 ## 1. Vision
 
-Transformer un guide d'entraînement (PDF) en application Android interactive et
-gamifiée : l'utilisateur progresse dans un programme sportif dont les niveaux se
-débloquent séquentiellement, comme dans un jeu (modèle Duolingo / Candy Crush).
+Transformer le guide **DailyRepsGuy — "How to Get Jacked in Under 20 Minutes a
+Day"** en application Android interactive et gamifiée : des séances de 20 minutes
+maximum, à la maison, avec une progression par phases qui se débloque comme dans
+un jeu.
 
 ## 2. Décisions actées
 
-| Sujet | Décision | Justification |
-|---|---|---|
-| Plateforme | Android (portage iOS possible plus tard) | Demande initiale |
-| Stack | **Flutter (Dart)** | Cross-platform, excellent pour les animations de gamification |
-| Persistance | **100 % local, sans compte** | Confidentialité, simplicité, pas de backend |
-| Gamification | **Niveaux + XP + badges + streaks** | Standard éprouvé (Duolingo) |
-| Profil | Paramétrage **homme / femme** dès l'onboarding | Demande initiale |
-| Langue | Français (i18n prévue dans l'architecture) | À confirmer |
+| Sujet | Décision |
+|---|---|
+| Plateforme | Android (Flutter → portage iOS possible) |
+| Stack | **Flutter (Dart)** |
+| Persistance | **100 % local, sans compte** (drift/SQLite + préférences) |
+| Gamification | **Niveaux + XP + badges + streaks** |
+| Profil | Homme / femme dès l'onboarding |
+| Contenu | Guide DailyRepsGuy, versionné en JSON dans les assets |
 
-## 3. Fonctionnalités
+## 3. Analyse du guide (synthèse)
 
-### 3.1 Onboarding & profil
-- Premier lancement : création du profil — prénom/pseudo, sexe (homme/femme),
-  éventuellement âge, poids, taille, niveau de départ (à confirmer selon le guide).
-- Le profil est modifiable ensuite dans les paramètres.
-- ⏳ EN ATTENTE : impact précis du sexe sur le programme (variantes d'exercices ?
-  charges ? programmes distincts ?) — dépend du guide PDF.
+Le guide ne définit **pas un programme linéaire de séances** mais une **méthode** :
 
-### 3.2 Carte de progression (écran principal)
-- Parcours visuel des niveaux (chemin type "carte de jeu") ; états : `verrouillé`,
-  `débloqué`, `en cours`, `terminé` (avec score 1–3 étoiles éventuel).
-- Un niveau N+1 se débloque quand le niveau N est validé.
-- ⏳ EN ATTENTE : découpage réel en niveaux/semaines/séances selon le guide.
+- **4 groupes musculaires** : Bras & Pectoraux, Jambes, Abdominaux, Dos.
+- **4 phases par groupe** : Beginner, Intermediate, Advanced, Pro (= Advanced
+  avec du lest). Chaque phase liste 4 à 9 exercices réalisables à la maison
+  (poids du corps, kettlebell, sac à dos, chaise).
+- **La phase est indépendante par groupe musculaire** : on peut être Phase 3
+  jambes et Phase 1 dos — l'app doit gérer 4 curseurs de progression distincts.
+- **Format de séance** : circuit AMRAP de 20 min max — 1 exercice par groupe
+  (dans sa phase courante) + 1–2 exercices "focus" sur un groupe du jour
+  (5–6 mouvements au total), repos 10–45 s entre mouvements, autant de tours
+  que possible.
+- **Règles de progression** (à automatiser dans l'app) :
+  - *Rule of thumb* : +2 répétitions sur la dernière série pendant 2 séances
+    consécutives → proposer la phase supérieure ;
+  - +10–20 % de répétitions totales à durée égale → durcir la séance ;
+  - micro-progressions avant de changer de phase : tempo, pauses, lest,
+    volume, amplitude.
+- **Semaine type** : 5–6 séances avec rotation du focus (lun. bras/pecs,
+  mar. jambes, jeu. abdos, ven. dos, sam. libre), repos mercredi et dimanche.
+- Le guide insiste sur la **constance** ("keep stacking daily wins") et
+  l'**accountability** → cœur de la gamification (streaks, badges).
+- Le guide est **unisexe** : le choix homme/femme du profil n'affecte pas le
+  contenu ; il sert à la personnalisation (avatar, formulations, et
+  éventuellement statistiques futures).
 
-### 3.3 Exécution d'une séance
-- Enchaînement guidé des exercices : nom, illustration/animation, consignes,
-  séries × répétitions ou durée.
-- Minuteur intégré (effort / repos), navigation exercice suivant/précédent,
-  pause, abandon (progression non validée).
-- Fin de séance : écran de récompense (XP gagnés, badge éventuel, streak).
+## 4. Transposition en jeu (proposition)
 
-### 3.4 Moteur de gamification
-- **XP** : attribués à chaque séance terminée (barème à définir : base + bonus
-  régularité/perfection).
-- **Niveaux de joueur** (distincts des niveaux du programme) : seuils d'XP
-  croissants.
-- **Badges/succès** : première séance, 7 jours de streak, programme à 50 %,
-  programme terminé, etc. (liste à finaliser).
-- **Streak** : jours consécutifs avec activité ; gel de streak à discuter.
+### 4.1 Quatre pistes de progression ("skill tracks")
+Chaque groupe musculaire est une piste visuelle de 4 niveaux (phases). La phase
+N+1 est **verrouillée** tant que les critères de progression ne sont pas
+atteints ; l'app détecte automatiquement le déclencheur (*rule of thumb* sur les
+répétitions enregistrées) et propose un "combat de boss" : une séance test qui,
+réussie, débloque la phase avec animation de récompense.
 
-### 3.5 Statistiques & historique
-- Historique des séances (date, durée, contenu).
-- Courbes de progression, total XP, records.
+### 4.2 La séance quotidienne ("quête du jour")
+L'app génère le circuit du jour selon la méthode du guide : 1 exercice par
+groupe tiré de la phase courante + focus du jour (rotation hebdomadaire),
+minuteur 20 min, compteur de tours et de répétitions, repos chronométré 10–45 s.
+L'utilisateur peut échanger un exercice proposé contre un autre de la même phase.
 
-### 3.6 Paramètres
-- Profil, notifications/rappels d'entraînement (à confirmer), sons/vibrations,
-  réinitialisation de la progression (avec double confirmation).
+### 4.3 Économie d'XP
+- XP par répétition validée + bonus de fin de séance + bonus de streak.
+- Niveau de joueur global (distinct des phases) avec seuils croissants.
+- Badges : première séance, 7/30/100 jours de streak, phase débloquée,
+  record de tours battu, groupe au niveau Pro, etc.
+- **Streak compatible avec les jours de repos** : le guide prescrit 2 jours de
+  repos/semaine → la série n'est pas cassée par un jour de repos planifié.
 
-## 4. Architecture technique (niveau ingénieur)
+### 4.4 Statistiques
+Historique des séances, répétitions totales par groupe, graphique de
+progression (le signal +10–20 % du guide devient une jauge visible), records.
 
-### 4.1 Stack
-- **Flutter** stable (Dart 3), Android `minSdk 26` (à confirmer).
-- **Gestion d'état** : Riverpod (ou Bloc — à trancher, Riverpod recommandé).
-- **Persistance** :
-  - `drift` (SQLite typé) pour l'historique des séances et la progression ;
-  - `shared_preferences` / `flutter_secure_storage` pour le profil et les réglages.
-- **Navigation** : `go_router`.
-- **Tests** : unitaires (moteur de gamification, déblocage de niveaux),
-  widget tests, golden tests sur les écrans clés.
+## 5. Architecture technique (niveau ingénieur)
+
+### 5.1 Stack
+- **Flutter** stable (Dart 3), Android `minSdk 26`.
+- **État** : Riverpod. **Navigation** : `go_router`.
+- **Persistance** : `drift` (SQLite typé) pour séances/records/progression ;
+  `shared_preferences` pour profil et réglages.
+- **Tests** : unitaires sur le moteur de progression et l'économie d'XP
+  (fonctions pures), widget tests, golden tests écrans clés.
 - **CI** : GitHub Actions — `flutter analyze` + `flutter test` + build APK.
 
-### 4.2 Découpage en couches
+### 5.2 Découpage en couches
 ```
 presentation/   écrans, widgets, animations (dépend de domain)
 domain/         entités, use cases, moteur de gamification (pur Dart, 100 % testable)
 data/           repositories, drift, préférences (implémente les interfaces de domain)
-content/        programme d'entraînement versionné (assets JSON générés depuis le PDF)
+content/        program.json — catalogue exercices/phases extrait du guide
 ```
 
-### 4.3 Modèle de données (première ébauche)
-- `Profile` (sexe, prénom, préférences)
-- `Program` → `Level` → `Session` → `Exercise` (contenu statique, versionné, en assets)
-- `SessionRecord` (séance réalisée : date, durée, XP)
-- `PlayerState` (XP total, badges débloqués, streak courant/max, dernier jour actif)
-- Règle de déblocage = fonction pure `unlockState(program, records)` → testée unitairement.
+### 5.3 Modèle de données
+- `Profile` (pseudo, sexe, jours d'entraînement, matériel disponible)
+- `MuscleGroup` → `Phase` → `Exercise` (statique, depuis `content/program.json`)
+- `ProgressState` : phase courante **par groupe musculaire** (4 curseurs)
+- `WorkoutSession` (date, durée, exercices, tours, répétitions par exercice)
+- `PlayerState` (XP total, niveau joueur, badges, streak courant/max)
+- Moteur : `phaseUpEligibility(records)`, `xpFor(session)`, `streak(records,
+  restDays)` — fonctions pures testées unitairement.
 
-### 4.4 Contenu
-Le guide PDF sera converti en un fichier de contenu structuré (JSON dans les
-assets), séparé du code : le programme peut évoluer sans toucher à la logique.
+## 6. Questions ouvertes
 
-## 5. Questions ouvertes (à valider par le propriétaire)
-
-1. **Le guide PDF** : à fournir (voir README) — il conditionne les sections 3.1, 3.2, 4.4.
-2. Différenciation homme/femme : programmes distincts ou variantes ?
-3. Rappels/notifications d'entraînement : oui/non, quelle logique ?
-4. Score par niveau (1–3 étoiles) : souhaité ou simple validé/non validé ?
-5. Direction artistique : thème sombre/clair, univers graphique (sport brut,
-   cartoon, minimaliste…), nom de l'application.
-6. Matériel requis par le guide (poids du corps ? haltères ?) — impacte les écrans.
-7. Âge/poids/taille dans le profil : utiles (calories ?) ou superflus ?
+1. **Comptage des répétitions** : saisie manuelle par tap pendant le circuit
+   (un gros bouton par tour/exercice), ou saisie récapitulative en fin de
+   séance ? Le tap en direct est plus "jeu" mais plus contraignant.
+2. **Déblocage de phase** : automatique dès critères atteints, ou via une
+   "séance de validation" (boss fight) ? (Proposition : boss fight.)
+3. **Matériel** : filtrer les exercices selon le matériel déclaré dans le
+   profil (kettlebell, barre de traction, chaise…) ?
+4. **Notifications** : rappels quotidiens + alerte "streak en danger" ?
+5. **Direction artistique** : univers graphique et nom de l'application.
+6. **Illustrations d'exercices** : pictogrammes/animations à produire, ou
+   texte descriptif seul pour la v1 ?
