@@ -1,7 +1,8 @@
 # Cahier des charges — Application sportive gamifiée (Android)
 
-> **Version 0.2** — le guide PDF a été analysé ; le contenu est extrait dans
-> `content/program.json` (source : `docs/DailyRepsGuy-Workout-Guide.pdf`).
+> **Version 1.0** — cadrage complet : guide analysé, toutes les décisions
+> produit actées. Contenu extrait dans `content/program.json`
+> (source : `docs/DailyRepsGuy-Workout-Guide.pdf`).
 
 ## 1. Vision
 
@@ -104,16 +105,18 @@ content/        program.json — catalogue exercices/phases extrait du guide
 - Moteur : `phaseUpEligibility(records)`, `xpFor(session)`, `streak(records,
   restDays)` — fonctions pures testées unitairement.
 
-## 6. Questions ouvertes
+## 6. Décisions produit finales
 
-1. **Comptage des répétitions** : saisie manuelle par tap pendant le circuit
-   (un gros bouton par tour/exercice), ou saisie récapitulative en fin de
-   séance ? Le tap en direct est plus "jeu" mais plus contraignant.
-2. **Déblocage de phase** : automatique dès critères atteints, ou via une
-   "séance de validation" (boss fight) ? (Proposition : boss fight.)
-3. **Matériel** : filtrer les exercices selon le matériel déclaré dans le
-   profil (kettlebell, barre de traction, chaise…) ?
-4. **Notifications** : rappels quotidiens + alerte "streak en danger" ?
-5. **Direction artistique** : univers graphique et nom de l'application.
-6. **Illustrations d'exercices** : pictogrammes/animations à produire, ou
-   texte descriptif seul pour la v1 ?
+1. **Comptage des répétitions** : saisie **à la fin de chaque série** (pas en
+   fin de séance) via un compteur à dérouler / incrémenter-décrémenter,
+   prérempli avec la dernière valeur connue.
+2. **Déblocage de phase** : séance **"boss fight" automatique** — l'app
+   détecte que la séance précédente s'approche des critères (*rule of thumb*)
+   et annonce le boss fight à l'avance ; le réussir débloque la phase.
+3. **Matériel** : les exercices proposés sont **filtrés selon le matériel
+   déclaré** dans le profil (kettlebell, barre de traction, chaise, sac à
+   dos, barres parallèles, gilet lesté).
+4. **Illustrations** : **pictogrammes animés** (dessinés en vectoriel dans
+   l'app, un type de pictogramme par famille de mouvement).
+5. **Nom** : **Fitness Game**. Direction artistique : univers propre,
+   élégant, moderne, simple.
