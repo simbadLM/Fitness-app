@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'content.dart';
-import 'gamification.dart';
 import 'models.dart';
 
 /// Génère la "quête du jour" selon la méthode du guide :
@@ -32,8 +31,9 @@ abstract final class WorkoutGenerator {
     required Set<Equipment> owned,
     required DateTime date,
 
-    /// exerciseId → répétitions de la dernière série enregistrée.
-    Map<String, int> lastSetReps = const {},
+    /// exerciseId → objectif fixe par tour. Un exercice absent de cette map
+    /// est en calibration (l'utilisateur saisira ses répétitions réelles).
+    Map<String, int> targets = const {},
   }) {
     final seed = date.year * 10000 + date.month * 100 + date.day;
     final focusGroupId = focusByWeekday[date.weekday];
@@ -45,24 +45,26 @@ abstract final class WorkoutGenerator {
       final phase = groupProgress.phase;
       final pool = _availablePool(group, phase, owned);
       final random = Random(seed + index);
-      final exercise = pool[random.nextInt(pool.length)];
+      // Un boss exige un exercice déjà calibré : l'objectif à relever vient de là.
+      final calibratedPool = [
+        for (final e in pool)
+          if (targets.containsKey(e.id)) e,
+      ];
+      final wantsBoss = bossGroupId == null &&
+          groupProgress.bossStatus == BossStatus.ready &&
+          calibratedPool.isNotEmpty;
+      final effectivePool = wantsBoss ? calibratedPool : pool;
+      final exercise = effectivePool[random.nextInt(effectivePool.length)];
       final weighted = phase >= 4 && owned.any(weightEquipment.contains);
-
-      final isBoss = bossGroupId == null &&
-          groupProgress.bossStatus == BossStatus.ready;
-      final target =
-          isBoss ? Gamification.bossTarget(lastSetReps[exercise.id]) : null;
-      if (isBoss) bossGroupId = group.id;
+      if (wantsBoss) bossGroupId = group.id;
 
       movements.add(Movement(
         group: group,
         exercise: exercise,
         phase: phase,
+        target: targets[exercise.id],
         weighted: weighted,
-        isBoss: isBoss,
-        bossTarget: target,
-        suggestedReps: lastSetReps[exercise.id] ??
-            (exercise.type == ExerciseType.duration ? 30 : 10),
+        isBoss: wantsBoss,
       ));
 
       if (group.id == focusGroupId) {
@@ -73,10 +75,9 @@ abstract final class WorkoutGenerator {
             group: group,
             exercise: extra,
             phase: phase,
+            target: targets[extra.id],
             weighted: weighted,
             isFocus: true,
-            suggestedReps: lastSetReps[extra.id] ??
-                (extra.type == ExerciseType.duration ? 30 : 10),
           ));
         }
       }

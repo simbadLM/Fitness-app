@@ -220,8 +220,8 @@ class _BossBanner extends StatelessWidget {
           Expanded(
             child: Text(
               ready
-                  ? 'Boss prêt en ${group.nameFr} : bats ton record pour débloquer la phase suivante !'
-                  : 'Boss en approche en ${group.nameFr} — encore une amélioration !',
+                  ? 'Boss prêt en ${group.nameFr} : tiens les objectifs relevés (+2) pour débloquer la phase suivante !'
+                  : 'Boss en approche en ${group.nameFr} — encore une séance à l\'objectif !',
               style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
             ),
           ),

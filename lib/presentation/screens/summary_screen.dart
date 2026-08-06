@@ -123,6 +123,58 @@ class SummaryScreen extends ConsumerWidget {
                       ),
                     ),
                   ],
+                  if (result.targetUps.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('📈 Objectifs relevés — trop facile pour toi !',
+                                style: TextStyle(fontWeight: FontWeight.w800)),
+                            const SizedBox(height: 8),
+                            for (final e in result.targetUps.entries)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 2),
+                                child: Text(
+                                  '${program.findExercise(e.key)?.name ?? e.key} : '
+                                  '${e.value.from} → ${e.value.to}',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                  if (result.calibratedTargets.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('🧭 Objectifs calibrés',
+                                style: TextStyle(fontWeight: FontWeight.w800)),
+                            const SizedBox(height: 8),
+                            for (final e in result.calibratedTargets.entries)
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 2),
+                                child: Text(
+                                  '${program.findExercise(e.key)?.name ?? e.key} : '
+                                  'objectif fixé à ${e.value} par tour',
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
                   if (result.bossGroupId != null && !result.bossWon) ...[
                     const SizedBox(height: 16),
                     Container(

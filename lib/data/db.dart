@@ -31,6 +31,15 @@ class SetLogs extends Table {
   BoolColumn get isDuration => boolean().withDefault(const Constant(false))();
 }
 
+/// Objectif fixe par tour de chaque exercice calibré (reps ou secondes).
+class ExerciseTargets extends Table {
+  TextColumn get exerciseId => text()();
+  IntColumn get target => integer()();
+
+  @override
+  Set<Column> get primaryKey => {exerciseId};
+}
+
 class GroupProgressRows extends Table {
   TextColumn get groupId => text()();
   IntColumn get phase => integer().withDefault(const Constant(1))();
@@ -53,14 +62,15 @@ class PlayerRows extends Table {
   Set<Column> get primaryKey => {id};
 }
 
-@DriftDatabase(tables: [Sessions, SetLogs, GroupProgressRows, PlayerRows])
+@DriftDatabase(
+    tables: [Sessions, SetLogs, ExerciseTargets, GroupProgressRows, PlayerRows])
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   AppDatabase.withExecutor(super.executor);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -70,6 +80,9 @@ class AppDatabase extends _$AppDatabase {
             const PlayerRowsCompanion(id: Value(0)),
             mode: InsertMode.insertOrIgnore,
           );
+        },
+        onUpgrade: (m, from, to) async {
+          if (from < 2) await m.createTable(exerciseTargets);
         },
       );
 

@@ -107,16 +107,28 @@ content/        program.json — catalogue exercices/phases extrait du guide
 
 ## 6. Décisions produit finales
 
-1. **Comptage des répétitions** : saisie **à la fin de chaque série** (pas en
-   fin de séance) via un compteur à dérouler / incrémenter-décrémenter,
-   prérempli avec la dernière valeur connue.
-2. **Déblocage de phase** : séance **"boss fight" automatique** — l'app
-   détecte que la séance précédente s'approche des critères (*rule of thumb*)
-   et annonce le boss fight à l'avance ; le réussir débloque la phase.
-3. **Matériel** : les exercices proposés sont **filtrés selon le matériel
+1. **Modèle AMRAP à objectifs fixes** *(révision v2.1)* : chaque mouvement
+   porte un **objectif de répétitions fixe par tour** ; le **score de la
+   séance = le nombre de tours**. Pendant l'effort, un seul bouton
+   **« Fait ✓ »** valide l'objectif ; un bouton discret « ajuster » ouvre le
+   compteur à dérouler / ± seulement en cas d'écart. Les exercices jamais
+   faits passent par une **calibration** (saisie du maximum propre →
+   objectif fixé à ~70 %, tenable en circuit).
+2. **Évaluation du niveau de départ** *(révision v2.1)* : **quiz de
+   placement** à l'onboarding (la checklist du guide, une question par
+   groupe musculaire → phase 1/2/3) + **première séance de calibration**
+   pour les objectifs de répétitions.
+3. **Progression & boss fight** *(révision v2.1)* : objectifs tenus sur
+   toutes les séries d'un groupe = séance réussie. 2 réussites consécutives →
+   si les objectifs sont sous le seuil de maîtrise (15 reps / 60 s), ils
+   sont **relevés de +2** (micro-progression du guide) ; s'ils sont au
+   seuil, le **boss fight** est annoncé : séance à objectifs **+2** à tenir
+   sur tous les tours → phase débloquée. Boss perdu = boss représenté.
+4. **Matériel** : les exercices proposés sont **filtrés selon le matériel
    déclaré** dans le profil (kettlebell, barre de traction, chaise, sac à
    dos, barres parallèles, gilet lesté).
-4. **Illustrations** : **pictogrammes animés** (dessinés en vectoriel dans
+5. **Illustrations** : **pictogrammes animés** (dessinés en vectoriel dans
    l'app, un type de pictogramme par famille de mouvement).
-5. **Nom** : **Fitness Game**. Direction artistique : univers propre,
+6. **Nom** : **Fitness Game**. Direction artistique : univers propre,
    élégant, moderne, simple.
+7. **Plateformes** : Android + iOS (v2), builds produits par la CI.

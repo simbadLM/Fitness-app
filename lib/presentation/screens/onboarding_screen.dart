@@ -27,7 +27,15 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   Sex? _sex;
   final Set<Equipment> _equipment = {};
   final Set<int> _trainingDays = {1, 2, 4, 5, 6};
+  final Map<String, int> _placement = {};
   bool _saving = false;
+
+  /// Checklist de placement du guide, condensée par phase.
+  static const _placementLevels = [
+    (1, 'Débutant', 'J\'apprends les mouvements, ma forme casse vite'),
+    (2, 'Intermédiaire', 'Forme correcte, challengé mais capable'),
+    (3, 'Avancé', 'Je domine, il me faut du lesté ou de l\'explosif'),
+  ];
 
   @override
   void dispose() {
@@ -46,9 +54,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
       trainingDays: Set.of(_trainingDays),
     );
     final program = ref.read(programProvider);
-    await ref
-        .read(gameRepoProvider)
-        .ensureProgressRows(program.groups.map((g) => g.id));
+    final repo = ref.read(gameRepoProvider);
+    await repo.ensureProgressRows(program.groups.map((g) => g.id));
+    for (final group in program.groups) {
+      await repo.setPhase(group.id, _placement[group.id] ?? 1);
+    }
     await ref.read(profileProvider.notifier).save(profile);
   }
 
@@ -108,6 +118,39 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               ],
             ),
             const SizedBox(height: 24),
+            const _SectionTitle('Ton niveau de départ'),
+            Text(
+              'Sois honnête, l\'app ajustera vite de toute façon. Ta première séance calibrera tes objectifs de répétitions.',
+              style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
+            ),
+            const SizedBox(height: 12),
+            for (final group in ref.watch(programProvider).groups) ...[
+              Text(group.nameFr,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 14)),
+              const SizedBox(height: 6),
+              SegmentedButton<int>(
+                segments: [
+                  for (final (phase, label, _) in _placementLevels)
+                    ButtonSegment(value: phase, label: Text(label)),
+                ],
+                selected: {_placement[group.id] ?? 1},
+                onSelectionChanged: (s) =>
+                    setState(() => _placement[group.id] = s.first),
+                showSelectedIcon: false,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                _placementLevels
+                    .firstWhere(
+                        (l) => l.$1 == (_placement[group.id] ?? 1))
+                    .$3,
+                style:
+                    TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
+              ),
+              const SizedBox(height: 12),
+            ],
+            const SizedBox(height: 12),
             const _SectionTitle('Ton matériel à la maison'),
             Text('Les exercices proposés s\'adaptent à ce que tu possèdes.',
                 style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),

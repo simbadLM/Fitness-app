@@ -96,35 +96,27 @@ class GameRepository {
     }
   }
 
-  /// Dernière série enregistrée pour chaque exercice (la plus récente).
-  Future<Map<String, int>> lastSetRepsByExercise() async {
-    final rows = await db.customSelect(
-      'SELECT sl.exercise_id AS eid, sl.reps AS reps '
-      'FROM set_logs sl JOIN sessions s ON s.id = sl.session_id '
-      'ORDER BY s.date ASC, sl.round ASC, sl.id ASC',
-      readsFrom: {db.setLogs, db.sessions},
-    ).get();
-    final result = <String, int>{};
-    for (final row in rows) {
-      result[row.read<String>('eid')] = row.read<int>('reps');
-    }
-    return result;
+  /// Fixe la phase de départ d'un groupe (quiz de placement de l'onboarding).
+  Future<void> setPhase(String groupId, int phase) async {
+    await db.into(db.groupProgressRows).insert(
+          GroupProgressRowsCompanion.insert(
+              groupId: groupId, phase: Value(phase)),
+          mode: InsertMode.insertOrReplace,
+        );
   }
 
-  /// Dernière série (la plus tardive) d'un exercice pour chacune des deux
-  /// dernières séances où il apparaît : `[avant-dernière, dernière]`.
-  Future<List<int>> lastTwoFinalSets(String exerciseId) async {
-    final rows = await db.customSelect(
-      'SELECT sl.session_id AS sid, MAX(sl.round) AS r, '
-      '(SELECT reps FROM set_logs WHERE session_id = sl.session_id '
-      ' AND exercise_id = sl.exercise_id ORDER BY round DESC, id DESC LIMIT 1) AS reps '
-      'FROM set_logs sl JOIN sessions s ON s.id = sl.session_id '
-      'WHERE sl.exercise_id = ? '
-      'GROUP BY sl.session_id ORDER BY s.date DESC LIMIT 2',
-      variables: [Variable.withString(exerciseId)],
-      readsFrom: {db.setLogs, db.sessions},
-    ).get();
-    return rows.reversed.map((r) => r.read<int>('reps')).toList();
+  /// exerciseId → objectif fixe par tour.
+  Future<Map<String, int>> getTargets() async {
+    final rows = await db.select(db.exerciseTargets).get();
+    return {for (final r in rows) r.exerciseId: r.target};
+  }
+
+  Future<void> setTarget(String exerciseId, int target) async {
+    await db.into(db.exerciseTargets).insert(
+          ExerciseTargetsCompanion.insert(
+              exerciseId: exerciseId, target: target),
+          mode: InsertMode.insertOrReplace,
+        );
   }
 
   Future<BadgeStats> badgeStats() async {
@@ -172,6 +164,7 @@ class GameRepository {
     await db.transaction(() async {
       await db.delete(db.setLogs).go();
       await db.delete(db.sessions).go();
+      await db.delete(db.exerciseTargets).go();
       await db.delete(db.groupProgressRows).go();
       await (db.update(db.playerRows)..where((p) => p.id.equals(0))).write(
         const PlayerRowsCompanion(
@@ -206,7 +199,7 @@ class WorkoutService {
     final player = await repo.getPlayer();
     final progress = await repo.getProgress();
 
-    // --- Boss fight ---
+    // --- Boss fight : toutes les séries du mouvement boss à l'objectif +2 ---
     final bossGroupId = plan.bossGroupId;
     var bossWon = false;
     if (bossGroupId != null) {
@@ -215,7 +208,7 @@ class WorkoutService {
       bossWon = Gamification.bossDefeated(
         bossSets:
             sets.where((s) => s.exerciseId == bossMovement.exercise.id),
-        target: bossMovement.bossTarget ?? 10,
+        target: bossMovement.effectiveTarget ?? 10,
       );
     }
 
@@ -233,33 +226,76 @@ class WorkoutService {
     final levelBefore = Gamification.levelInfo(player.xp).level;
     final levelAfter = Gamification.levelInfo(player.xp + xpTotal).level;
 
-    // --- Progression par groupe (rule of thumb) ---
+    // --- Calibration : les mouvements sans objectif en reçoivent un ---
+    final calibratedTargets = <String, int>{};
+    for (final movement in plan.movements.where((m) => m.isCalibration)) {
+      final movementSets =
+          sets.where((s) => s.exerciseId == movement.exercise.id).toList();
+      if (movementSets.isEmpty) continue;
+      final best =
+          movementSets.map((s) => s.reps).reduce((a, b) => a > b ? a : b);
+      calibratedTargets[movement.exercise.id] = Gamification.calibrationTarget(
+        best: best,
+        isDuration: movement.exercise.type == ExerciseType.duration,
+      );
+    }
+
+    // --- Progression par groupe : objectifs tenus → streak → +2 ou boss ---
     final phaseUps = <String, int>{};
+    final targetUps = <String, ({int from, int to})>{};
     final progressUpdates = <String, GroupProgress>{};
-    for (final movement in plan.movements.where((m) => !m.isFocus)) {
-      final current =
-          progress[movement.group.id] ?? GroupProgress(groupId: movement.group.id);
-      if (movement.isBoss) {
+    final movementsByGroup = <String, List<Movement>>{};
+    for (final m in plan.movements) {
+      movementsByGroup.putIfAbsent(m.group.id, () => []).add(m);
+    }
+
+    for (final entry in movementsByGroup.entries) {
+      final groupId = entry.key;
+      final current = progress[groupId] ?? GroupProgress(groupId: groupId);
+
+      if (groupId == bossGroupId) {
         if (bossWon) {
           final newPhase = current.phase + 1;
-          phaseUps[movement.group.id] = newPhase;
-          progressUpdates[movement.group.id] =
+          phaseUps[groupId] = newPhase;
+          progressUpdates[groupId] =
               current.copyWith(phase: newPhase, improvementStreak: 0);
         }
         // Boss perdu : le compteur reste à 2, le boss se représentera.
         continue;
       }
-      final history = await repo.lastTwoFinalSets(movement.exercise.id);
-      final todayFinal = _finalSetReps(sets, movement.exercise.id);
-      if (todayFinal == null) continue;
-      final previous = history.isNotEmpty ? history.last : null;
-      final nextStreak = Gamification.nextImprovementStreak(
-        current: current.improvementStreak,
-        lastSetReps: todayFinal,
-        previousLastSetReps: previous,
-      );
+
+      final targeted = {
+        for (final m in entry.value)
+          if (m.target != null) m.exercise.id: m.target!,
+      };
+      if (targeted.isEmpty) continue; // groupe entièrement en calibration
+      final groupSets =
+          sets.where((s) => s.groupId == groupId).toList();
+      final succeeded = Gamification.groupSucceeded(
+          sets: groupSets, targetByExercise: targeted);
+      var nextStreak = Gamification.nextSuccessStreak(
+          current: current.improvementStreak, succeeded: succeeded);
+
+      if (nextStreak >= 2 && current.phase < 4) {
+        // Maîtrise atteinte → boss prêt ; sinon micro-progression +2 et on repart.
+        final allMastered = entry.value.every((m) =>
+            m.target == null ||
+            Gamification.isMastered(
+                target: m.target!,
+                isDuration: m.exercise.type == ExerciseType.duration));
+        if (!allMastered) {
+          for (final m in entry.value) {
+            if (m.target == null) continue;
+            final to = m.target! +
+                Gamification.targetIncrement(
+                    m.exercise.type == ExerciseType.duration);
+            targetUps[m.exercise.id] = (from: m.target!, to: to);
+          }
+          nextStreak = 0;
+        }
+      }
       if (nextStreak != current.improvementStreak) {
-        progressUpdates[movement.group.id] =
+        progressUpdates[groupId] =
             current.copyWith(improvementStreak: nextStreak);
       }
     }
@@ -313,6 +349,20 @@ class WorkoutService {
               mode: InsertMode.insertOrReplace,
             );
       }
+      for (final e in calibratedTargets.entries) {
+        await db.into(db.exerciseTargets).insert(
+              ExerciseTargetsCompanion.insert(
+                  exerciseId: e.key, target: e.value),
+              mode: InsertMode.insertOrReplace,
+            );
+      }
+      for (final e in targetUps.entries) {
+        await db.into(db.exerciseTargets).insert(
+              ExerciseTargetsCompanion.insert(
+                  exerciseId: e.key, target: e.value.to),
+              mode: InsertMode.insertOrReplace,
+            );
+      }
       await (db.update(db.playerRows)..where((p) => p.id.equals(0))).write(
         PlayerRowsCompanion(
           xp: Value(player.xp + xpTotal),
@@ -340,13 +390,10 @@ class WorkoutService {
       bossGroupId: bossGroupId,
       bossWon: bossWon,
       phaseUps: phaseUps,
+      targetUps: targetUps,
+      calibratedTargets: calibratedTargets,
       playerLevelBefore: levelBefore,
       playerLevelAfter: levelAfter,
     );
-  }
-
-  int? _finalSetReps(List<SetLog> sets, String exerciseId) {
-    final matching = sets.where((s) => s.exerciseId == exerciseId).toList();
-    return matching.isEmpty ? null : matching.last.reps;
   }
 }

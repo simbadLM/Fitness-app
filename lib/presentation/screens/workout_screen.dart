@@ -24,6 +24,7 @@ class WorkoutScreen extends ConsumerStatefulWidget {
 class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
   _Stage _stage = _Stage.loading;
   WorkoutPlan? _plan;
+  Map<String, int> _targets = const {};
   Timer? _ticker;
 
   late int _remainingSeconds;
@@ -53,17 +54,18 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
     final repo = ref.read(gameRepoProvider);
     await repo.ensureProgressRows(program.groups.map((g) => g.id));
     final progress = await repo.getProgress();
-    final lastReps = await repo.lastSetRepsByExercise();
+    final targets = await repo.getTargets();
     final plan = WorkoutGenerator.generate(
       program: program,
       progress: progress,
       owned: profile.equipment,
       date: DateTime.now(),
-      lastSetReps: lastReps,
+      targets: targets,
     );
     if (!mounted) return;
     setState(() {
       _plan = plan;
+      _targets = targets;
       _remainingSeconds = plan.duration.inSeconds;
       _stage = _Stage.preview;
     });
@@ -111,24 +113,40 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
 
   Movement get _current => _plan!.movements[_movementIndex];
 
+  /// « Fait ✓ » : valide l'objectif tel quel. En calibration (pas d'objectif
+  /// connu), la molette s'ouvre pour saisir les répétitions réelles.
   Future<void> _completeSet() async {
     final movement = _current;
+    if (movement.isCalibration) {
+      return _completeSetAdjusted(
+          title: 'Calibration : combien as-tu fait ?');
+    }
+    _recordSet(movement, movement.effectiveTarget!);
+  }
+
+  /// « Ajuster » : saisir un nombre différent de l'objectif.
+  Future<void> _completeSetAdjusted({String? title}) async {
+    final movement = _current;
     final isDuration = movement.exercise.type == ExerciseType.duration;
-    final previous = _sets
-        .where((s) => s.exerciseId == movement.exercise.id)
-        .toList();
+    final previous =
+        _sets.where((s) => s.exerciseId == movement.exercise.id).toList();
     final initial = previous.isNotEmpty
         ? previous.last.reps
-        : movement.suggestedReps ?? (isDuration ? 30 : 10);
+        : movement.effectiveTarget ?? (isDuration ? 30 : 10);
     final reps = await showRepPicker(
       context,
       initial: initial,
       isDuration: isDuration,
-      title: movement.isBoss
-          ? 'BOSS : objectif ${movement.bossTarget} — combien de reps ?'
-          : null,
+      title: title ??
+          (movement.isBoss
+              ? 'BOSS : objectif ${movement.effectiveTarget} — combien ?'
+              : null),
     );
     if (reps == null || !mounted) return;
+    _recordSet(movement, reps);
+  }
+
+  void _recordSet(Movement movement, int reps) {
     setState(() {
       _sets.add(SetLog(
         exerciseId: movement.exercise.id,
@@ -137,7 +155,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
         round: _round,
         reps: reps,
         weighted: movement.weighted,
-        isDuration: isDuration,
+        isDuration: movement.exercise.type == ExerciseType.duration,
       ));
       if (_movementIndex == _plan!.movements.length - 1) {
         _movementIndex = 0;
@@ -179,7 +197,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
       _plan = WorkoutPlan(
         movements: [
           for (final (i, m) in _plan!.movements.indexed)
-            i == _movementIndex ? m.copyWith(exercise: chosen) : m,
+            i == _movementIndex
+                ? m.copyWith(
+                    exercise: chosen, target: () => _targets[chosen.id])
+                : m,
         ],
         focusGroupId: _plan!.focusGroupId,
         bossGroupId: _plan!.bossGroupId,
@@ -207,7 +228,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
       plan: _plan!,
       sets: _sets,
       elapsed: elapsed,
-      rounds: _round - 1 >= 1 ? _round - (_movementIndex == 0 ? 1 : 0) : _round,
+      rounds: _round - 1 < 0 ? 0 : _round - 1,
       profile: profile,
     );
     if (!mounted) return;
@@ -290,6 +311,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
   }
 
   Widget _buildExercise(ColorScheme scheme, Movement movement) {
+    final isDuration = movement.exercise.type == ExerciseType.duration;
+    final unit = isDuration ? 's' : 'reps';
     return Padding(
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -302,18 +325,33 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                '⚔️ BOSS — fais ${movement.bossTarget} reps sur une série !',
+                '⚔️ BOSS — tiens ${movement.effectiveTarget} $unit sur chaque tour !',
                 style: const TextStyle(
                     color: Colors.white, fontWeight: FontWeight.w800),
+              ),
+            ),
+          if (movement.isCalibration)
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: scheme.tertiaryContainer,
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Text(
+                '🧭 Calibration — fais ton maximum propre, l\'app fixera ton objectif',
+                style: TextStyle(
+                    color: scheme.onTertiaryContainer,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13),
               ),
             ),
           const Spacer(),
           AnimatedPictogram(
             type: movement.exercise.picto,
-            size: 200,
+            size: 180,
             color: movement.isBoss ? AppTheme.boss : null,
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -347,13 +385,27 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
               style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
             ),
           ],
-          const SizedBox(height: 8),
-          Text(
-            movement.exercise.type == ExerciseType.duration
-                ? 'Objectif : ~${movement.suggestedReps ?? 30} s'
-                : 'Objectif : ~${movement.suggestedReps ?? 10} reps',
-            style: const TextStyle(fontWeight: FontWeight.w600),
-          ),
+          const SizedBox(height: 16),
+          if (!movement.isCalibration)
+            Text.rich(
+              TextSpan(children: [
+                TextSpan(
+                  text: '${movement.effectiveTarget}',
+                  style: TextStyle(
+                    fontSize: 56,
+                    fontWeight: FontWeight.w900,
+                    color: movement.isBoss ? AppTheme.boss : scheme.primary,
+                  ),
+                ),
+                TextSpan(
+                  text: ' $unit',
+                  style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w700,
+                      color: scheme.onSurfaceVariant),
+                ),
+              ]),
+            ),
           const Spacer(),
           Row(
             children: [
@@ -369,11 +421,20 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
                   style: movement.isBoss
                       ? FilledButton.styleFrom(backgroundColor: AppTheme.boss)
                       : null,
-                  child: const Text('Série faite ✓'),
+                  child: Text(movement.isCalibration
+                      ? 'Saisir mes $unit'
+                      : 'Fait ✓'),
                 ),
               ),
             ],
           ),
+          if (!movement.isCalibration)
+            TextButton(
+              onPressed: () => _completeSetAdjusted(),
+              child: Text('J\'ai fait plus ou moins — ajuster',
+                  style: TextStyle(
+                      fontSize: 13, color: scheme.onSurfaceVariant)),
+            ),
         ],
       ),
     );
@@ -404,9 +465,17 @@ class _PreviewView extends StatelessWidget {
                 padding: const EdgeInsets.all(20),
                 children: [
                   Text(
-                    '${plan.duration.inMinutes} minutes max · circuit — enchaîne les mouvements et fais un maximum de tours. Repos de 10 à 45 s entre les mouvements.',
+                    '${plan.duration.inMinutes} minutes max · objectifs fixes par mouvement — fais un maximum de tours, c\'est ton score. Repos de 10 à 45 s entre les mouvements.',
                     style: TextStyle(color: scheme.onSurfaceVariant),
                   ),
+                  if (plan.movements.any((m) => m.isCalibration)) ...[
+                    const SizedBox(height: 8),
+                    Text(
+                      '🧭 Certains mouvements sont en calibration : fais ton maximum proprement, l\'app en déduira tes objectifs.',
+                      style: TextStyle(
+                          color: scheme.onSurfaceVariant, fontSize: 13),
+                    ),
+                  ],
                   const SizedBox(height: 16),
                   for (final (index, movement) in plan.movements.indexed)
                     Card(
@@ -423,10 +492,14 @@ class _PreviewView extends StatelessWidget {
                         subtitle: Text([
                           movement.group.nameFr,
                           'Phase ${movement.phase}',
+                          if (movement.isCalibration)
+                            '🧭 calibration'
+                          else
+                            'objectif ${movement.effectiveTarget} '
+                                '${movement.exercise.type == ExerciseType.duration ? 's' : 'reps'}',
                           if (movement.isFocus) 'focus',
                           if (movement.weighted) 'avec lest',
-                          if (movement.isBoss)
-                            '⚔️ BOSS · objectif ${movement.bossTarget} reps',
+                          if (movement.isBoss) '⚔️ BOSS',
                         ].join(' · ')),
                         trailing: IconButton(
                           icon: const Icon(Icons.swap_horiz_rounded),

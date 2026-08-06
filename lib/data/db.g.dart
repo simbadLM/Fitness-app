@@ -1005,6 +1005,223 @@ class SetLogsCompanion extends UpdateCompanion<SetLogRow> {
   }
 }
 
+class $ExerciseTargetsTable extends ExerciseTargets
+    with TableInfo<$ExerciseTargetsTable, ExerciseTarget> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ExerciseTargetsTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _exerciseIdMeta = const VerificationMeta(
+    'exerciseId',
+  );
+  @override
+  late final GeneratedColumn<String> exerciseId = GeneratedColumn<String>(
+    'exercise_id',
+    aliasedName,
+    false,
+    type: DriftSqlType.string,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _targetMeta = const VerificationMeta('target');
+  @override
+  late final GeneratedColumn<int> target = GeneratedColumn<int>(
+    'target',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [exerciseId, target];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'exercise_targets';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<ExerciseTarget> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('exercise_id')) {
+      context.handle(
+        _exerciseIdMeta,
+        exerciseId.isAcceptableOrUnknown(data['exercise_id']!, _exerciseIdMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_exerciseIdMeta);
+    }
+    if (data.containsKey('target')) {
+      context.handle(
+        _targetMeta,
+        target.isAcceptableOrUnknown(data['target']!, _targetMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_targetMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {exerciseId};
+  @override
+  ExerciseTarget map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ExerciseTarget(
+      exerciseId: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}exercise_id'],
+      )!,
+      target: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}target'],
+      )!,
+    );
+  }
+
+  @override
+  $ExerciseTargetsTable createAlias(String alias) {
+    return $ExerciseTargetsTable(attachedDatabase, alias);
+  }
+}
+
+class ExerciseTarget extends DataClass implements Insertable<ExerciseTarget> {
+  final String exerciseId;
+  final int target;
+  const ExerciseTarget({required this.exerciseId, required this.target});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['exercise_id'] = Variable<String>(exerciseId);
+    map['target'] = Variable<int>(target);
+    return map;
+  }
+
+  ExerciseTargetsCompanion toCompanion(bool nullToAbsent) {
+    return ExerciseTargetsCompanion(
+      exerciseId: Value(exerciseId),
+      target: Value(target),
+    );
+  }
+
+  factory ExerciseTarget.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ExerciseTarget(
+      exerciseId: serializer.fromJson<String>(json['exerciseId']),
+      target: serializer.fromJson<int>(json['target']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'exerciseId': serializer.toJson<String>(exerciseId),
+      'target': serializer.toJson<int>(target),
+    };
+  }
+
+  ExerciseTarget copyWith({String? exerciseId, int? target}) => ExerciseTarget(
+    exerciseId: exerciseId ?? this.exerciseId,
+    target: target ?? this.target,
+  );
+  ExerciseTarget copyWithCompanion(ExerciseTargetsCompanion data) {
+    return ExerciseTarget(
+      exerciseId: data.exerciseId.present
+          ? data.exerciseId.value
+          : this.exerciseId,
+      target: data.target.present ? data.target.value : this.target,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExerciseTarget(')
+          ..write('exerciseId: $exerciseId, ')
+          ..write('target: $target')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(exerciseId, target);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ExerciseTarget &&
+          other.exerciseId == this.exerciseId &&
+          other.target == this.target);
+}
+
+class ExerciseTargetsCompanion extends UpdateCompanion<ExerciseTarget> {
+  final Value<String> exerciseId;
+  final Value<int> target;
+  final Value<int> rowid;
+  const ExerciseTargetsCompanion({
+    this.exerciseId = const Value.absent(),
+    this.target = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ExerciseTargetsCompanion.insert({
+    required String exerciseId,
+    required int target,
+    this.rowid = const Value.absent(),
+  }) : exerciseId = Value(exerciseId),
+       target = Value(target);
+  static Insertable<ExerciseTarget> custom({
+    Expression<String>? exerciseId,
+    Expression<int>? target,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (exerciseId != null) 'exercise_id': exerciseId,
+      if (target != null) 'target': target,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ExerciseTargetsCompanion copyWith({
+    Value<String>? exerciseId,
+    Value<int>? target,
+    Value<int>? rowid,
+  }) {
+    return ExerciseTargetsCompanion(
+      exerciseId: exerciseId ?? this.exerciseId,
+      target: target ?? this.target,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (exerciseId.present) {
+      map['exercise_id'] = Variable<String>(exerciseId.value);
+    }
+    if (target.present) {
+      map['target'] = Variable<int>(target.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ExerciseTargetsCompanion(')
+          ..write('exerciseId: $exerciseId, ')
+          ..write('target: $target, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $GroupProgressRowsTable extends GroupProgressRows
     with TableInfo<$GroupProgressRowsTable, GroupProgressRow> {
   @override
@@ -1722,6 +1939,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
   late final $SessionsTable sessions = $SessionsTable(this);
   late final $SetLogsTable setLogs = $SetLogsTable(this);
+  late final $ExerciseTargetsTable exerciseTargets = $ExerciseTargetsTable(
+    this,
+  );
   late final $GroupProgressRowsTable groupProgressRows =
       $GroupProgressRowsTable(this);
   late final $PlayerRowsTable playerRows = $PlayerRowsTable(this);
@@ -1732,6 +1952,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   List<DatabaseSchemaEntity> get allSchemaEntities => [
     sessions,
     setLogs,
+    exerciseTargets,
     groupProgressRows,
     playerRows,
   ];
@@ -2462,6 +2683,157 @@ typedef $$SetLogsTableProcessedTableManager =
       SetLogRow,
       PrefetchHooks Function({bool sessionId})
     >;
+typedef $$ExerciseTargetsTableCreateCompanionBuilder =
+    ExerciseTargetsCompanion Function({
+      required String exerciseId,
+      required int target,
+      Value<int> rowid,
+    });
+typedef $$ExerciseTargetsTableUpdateCompanionBuilder =
+    ExerciseTargetsCompanion Function({
+      Value<String> exerciseId,
+      Value<int> target,
+      Value<int> rowid,
+    });
+
+class $$ExerciseTargetsTableFilterComposer
+    extends Composer<_$AppDatabase, $ExerciseTargetsTable> {
+  $$ExerciseTargetsTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get target => $composableBuilder(
+    column: $table.target,
+    builder: (column) => ColumnFilters(column),
+  );
+}
+
+class $$ExerciseTargetsTableOrderingComposer
+    extends Composer<_$AppDatabase, $ExerciseTargetsTable> {
+  $$ExerciseTargetsTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get target => $composableBuilder(
+    column: $table.target,
+    builder: (column) => ColumnOrderings(column),
+  );
+}
+
+class $$ExerciseTargetsTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ExerciseTargetsTable> {
+  $$ExerciseTargetsTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get exerciseId => $composableBuilder(
+    column: $table.exerciseId,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get target =>
+      $composableBuilder(column: $table.target, builder: (column) => column);
+}
+
+class $$ExerciseTargetsTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $ExerciseTargetsTable,
+          ExerciseTarget,
+          $$ExerciseTargetsTableFilterComposer,
+          $$ExerciseTargetsTableOrderingComposer,
+          $$ExerciseTargetsTableAnnotationComposer,
+          $$ExerciseTargetsTableCreateCompanionBuilder,
+          $$ExerciseTargetsTableUpdateCompanionBuilder,
+          (
+            ExerciseTarget,
+            BaseReferences<
+              _$AppDatabase,
+              $ExerciseTargetsTable,
+              ExerciseTarget
+            >,
+          ),
+          ExerciseTarget,
+          PrefetchHooks Function()
+        > {
+  $$ExerciseTargetsTableTableManager(
+    _$AppDatabase db,
+    $ExerciseTargetsTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ExerciseTargetsTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ExerciseTargetsTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ExerciseTargetsTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<String> exerciseId = const Value.absent(),
+                Value<int> target = const Value.absent(),
+                Value<int> rowid = const Value.absent(),
+              }) => ExerciseTargetsCompanion(
+                exerciseId: exerciseId,
+                target: target,
+                rowid: rowid,
+              ),
+          createCompanionCallback:
+              ({
+                required String exerciseId,
+                required int target,
+                Value<int> rowid = const Value.absent(),
+              }) => ExerciseTargetsCompanion.insert(
+                exerciseId: exerciseId,
+                target: target,
+                rowid: rowid,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ),
+      );
+}
+
+typedef $$ExerciseTargetsTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $ExerciseTargetsTable,
+      ExerciseTarget,
+      $$ExerciseTargetsTableFilterComposer,
+      $$ExerciseTargetsTableOrderingComposer,
+      $$ExerciseTargetsTableAnnotationComposer,
+      $$ExerciseTargetsTableCreateCompanionBuilder,
+      $$ExerciseTargetsTableUpdateCompanionBuilder,
+      (
+        ExerciseTarget,
+        BaseReferences<_$AppDatabase, $ExerciseTargetsTable, ExerciseTarget>,
+      ),
+      ExerciseTarget,
+      PrefetchHooks Function()
+    >;
 typedef $$GroupProgressRowsTableCreateCompanionBuilder =
     GroupProgressRowsCompanion Function({
       required String groupId,
@@ -2880,6 +3252,8 @@ class $AppDatabaseManager {
       $$SessionsTableTableManager(_db, _db.sessions);
   $$SetLogsTableTableManager get setLogs =>
       $$SetLogsTableTableManager(_db, _db.setLogs);
+  $$ExerciseTargetsTableTableManager get exerciseTargets =>
+      $$ExerciseTargetsTableTableManager(_db, _db.exerciseTargets);
   $$GroupProgressRowsTableTableManager get groupProgressRows =>
       $$GroupProgressRowsTableTableManager(_db, _db.groupProgressRows);
   $$PlayerRowsTableTableManager get playerRows =>

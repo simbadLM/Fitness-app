@@ -121,7 +121,31 @@ void main() {
       );
     });
 
-    test('boss injecté quand un groupe est prêt', () {
+    /// Tous les exercices d'un groupe/phase calibrés à [target].
+    Map<String, int> targetsFor(String groupId, int phase, int target) => {
+          for (final e in program.group(groupId).exercisesForPhase(phase))
+            e.id: target,
+        };
+
+    test('mouvements calibrés → objectif porté, sinon calibration', () {
+      final targets = targetsFor('legs', 1, 12);
+      final plan = WorkoutGenerator.generate(
+        program: program,
+        progress: progressAt(1),
+        owned: const {},
+        date: DateTime(2026, 8, 4),
+        targets: targets,
+      );
+      final legs =
+          plan.movements.singleWhere((m) => m.group.id == 'legs' && !m.isFocus);
+      expect(legs.target, 12);
+      expect(legs.isCalibration, isFalse);
+      final abs =
+          plan.movements.singleWhere((m) => m.group.id == 'abs' && !m.isFocus);
+      expect(abs.isCalibration, isTrue);
+    });
+
+    test('boss injecté quand un groupe est prêt et calibré', () {
       final progress = progressAt(1);
       progress['legs'] =
           const GroupProgress(groupId: 'legs', phase: 1, improvementStreak: 2);
@@ -130,20 +154,39 @@ void main() {
         progress: progress,
         owned: const {},
         date: DateTime(2026, 8, 4),
-        lastSetReps: const {},
+        targets: targetsFor('legs', 1, 15),
       );
       expect(plan.bossGroupId, 'legs');
       final boss = plan.movements.singleWhere((m) => m.isBoss);
       expect(boss.group.id, 'legs');
-      expect(boss.bossTarget, isNotNull);
+      // Objectif du boss = objectif courant + 2.
+      expect(boss.target, 15);
+      expect(boss.effectiveTarget, 17);
+    });
+
+    test('pas de boss sans exercice calibré dans le groupe', () {
+      final progress = progressAt(1);
+      progress['legs'] =
+          const GroupProgress(groupId: 'legs', phase: 1, improvementStreak: 2);
+      final plan = WorkoutGenerator.generate(
+        program: program,
+        progress: progress,
+        owned: const {},
+        date: DateTime(2026, 8, 4),
+      );
+      expect(plan.bossGroupId, isNull);
     });
 
     test('un seul boss par séance même si plusieurs groupes sont prêts', () {
+      final targets = {
+        for (final g in program.groups) ...targetsFor(g.id, 1, 15),
+      };
       final plan = WorkoutGenerator.generate(
         program: program,
         progress: progressAt(1, improvementStreak: 2),
         owned: const {},
         date: DateTime(2026, 8, 4),
+        targets: targets,
       );
       expect(plan.movements.where((m) => m.isBoss), hasLength(1));
     });
@@ -166,21 +209,5 @@ void main() {
       expect(without.movements.every((m) => m.weighted), isFalse);
     });
 
-    test('cible boss = dernière série + 2', () {
-      final progress = progressAt(1);
-      progress['abs'] =
-          const GroupProgress(groupId: 'abs', phase: 1, improvementStreak: 2);
-      final plan = WorkoutGenerator.generate(
-        program: program,
-        progress: progress,
-        owned: const {},
-        date: DateTime(2026, 8, 4),
-        lastSetReps: {
-          for (final e in program.group('abs').exercisesForPhase(1)) e.id: 20,
-        },
-      );
-      final boss = plan.movements.singleWhere((m) => m.isBoss);
-      expect(boss.bossTarget, 22);
-    });
   });
 }

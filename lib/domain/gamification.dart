@@ -79,37 +79,58 @@ abstract final class Gamification {
     return last.isBefore(previousScheduled) ? 0 : stored;
   }
 
-  /// Rule of thumb du guide : +2 reps ou plus sur la dernière série du même
-  /// exercice par rapport à la séance précédente.
-  static bool isImprovement({
-    required int lastSetReps,
-    required int previousLastSetReps,
-  }) =>
-      lastSetReps >= previousLastSetReps + 2;
+  // --- Modèle AMRAP à objectifs fixes ---
 
-  /// Met à jour le compteur d'améliorations consécutives d'un groupe après une
-  /// séance normale. `null` en entrée = pas d'historique comparable (inchangé).
-  static int nextImprovementStreak({
-    required int current,
-    required int? lastSetReps,
-    required int? previousLastSetReps,
-  }) {
-    if (lastSetReps == null || previousLastSetReps == null) return current;
-    return isImprovement(
-            lastSetReps: lastSetReps, previousLastSetReps: previousLastSetReps)
-        ? current + 1
-        : 0;
+  /// Incrément de micro-progression (rule of thumb du guide : +2 reps).
+  static const int targetIncrementReps = 2;
+  static const int targetIncrementSeconds = 10;
+
+  /// Seuil de maîtrise d'un objectif : au-delà, on ne relève plus l'objectif,
+  /// on déclenche le boss fight vers la phase supérieure (« move to the next
+  /// phase when movements are too easy »).
+  static const int masteryReps = 15;
+  static const int masterySeconds = 60;
+
+  static int targetIncrement(bool isDuration) =>
+      isDuration ? targetIncrementSeconds : targetIncrementReps;
+
+  static bool isMastered({required int target, required bool isDuration}) =>
+      target >= (isDuration ? masterySeconds : masteryReps);
+
+  /// Objectif initial déduit de la calibration : ~70 % du meilleur effort,
+  /// pour être tenable sur tous les tours d'un AMRAP.
+  static int calibrationTarget({required int best, required bool isDuration}) {
+    final floor = isDuration ? 15 : 5;
+    return max(floor, (best * 0.7).round());
   }
 
-  /// Objectif du boss fight : battre sa dernière série de 2 répétitions.
-  static int bossTarget(int? previousLastSetReps) =>
-      (previousLastSetReps ?? 8) + 2;
+  /// Un groupe réussit sa séance si chaque série de ses mouvements à objectif
+  /// atteint l'objectif (aucune série en dessous, au moins une série faite).
+  static bool groupSucceeded({
+    required Iterable<SetLog> sets,
+    required Map<String, int> targetByExercise,
+  }) {
+    var any = false;
+    for (final s in sets) {
+      final target = targetByExercise[s.exerciseId];
+      if (target == null) continue;
+      any = true;
+      if (s.reps < target) return false;
+    }
+    return any;
+  }
 
+  /// Compteur de séances réussies consécutives d'un groupe.
+  static int nextSuccessStreak({required int current, required bool succeeded}) =>
+      succeeded ? current + 1 : 0;
+
+  /// Le boss est vaincu si toutes les séries du mouvement boss tiennent
+  /// l'objectif relevé, sur au moins un tour.
   static bool bossDefeated({
     required Iterable<SetLog> bossSets,
     required int target,
   }) =>
-      bossSets.any((s) => s.reps >= target);
+      bossSets.isNotEmpty && bossSets.every((s) => s.reps >= target);
 }
 
 /// Un badge à débloquer. Les conditions sont évaluées sur un instantané des

@@ -65,8 +65,10 @@ class GroupProgress {
   final String groupId;
   final int phase;
 
-  /// Nombre de séances consécutives avec amélioration (+2 reps sur la dernière
-  /// série du même exercice). 0 = normal, 1 = boss approche, >= 2 = boss fight.
+  /// Séances consécutives où tous les objectifs du groupe ont été tenus.
+  /// 0 = normal, 1 = boss en approche, >= 2 = boss fight prêt (le compteur
+  /// n'atteint 2 que si les objectifs sont au seuil de maîtrise ; sinon ils
+  /// sont relevés de +2 et le compteur repart à 0 — micro-progression).
   final int improvementStreak;
 
   GroupProgress copyWith({int? phase, int? improvementStreak}) => GroupProgress(
@@ -110,41 +112,49 @@ class SetLog {
 }
 
 /// Un mouvement du circuit du jour.
+///
+/// Modèle AMRAP à volume fixe : chaque mouvement porte un objectif de
+/// répétitions ([target]) identique à chaque tour ; le score de la séance est
+/// le nombre de tours. Un mouvement sans objectif connu est en
+/// [isCalibration] : l'utilisateur saisit ses répétitions réelles et
+/// l'objectif en est déduit en fin de séance.
 class Movement {
   const Movement({
     required this.group,
     required this.exercise,
     required this.phase,
+    this.target,
     this.weighted = false,
     this.isFocus = false,
     this.isBoss = false,
-    this.bossTarget,
-    this.suggestedReps,
   });
 
   final MuscleGroup group;
   final Exercise exercise;
   final int phase;
+
+  /// Objectif fixe par tour (reps, ou secondes pour un exercice chronométré).
+  /// `null` = calibration.
+  final int? target;
+
   final bool weighted;
   final bool isFocus;
   final bool isBoss;
 
-  /// Répétitions à atteindre sur une série pour vaincre le boss.
-  final int? bossTarget;
+  bool get isCalibration => target == null;
 
-  /// Pré-remplissage du compteur (dernière perf connue ou défaut).
-  final int? suggestedReps;
+  /// Objectif affiché : celui du boss (+2) si le mouvement est un boss.
+  int? get effectiveTarget =>
+      isBoss && target != null ? target! + 2 : target;
 
-  Movement copyWith({Exercise? exercise, bool? isBoss, int? bossTarget}) =>
-      Movement(
+  Movement copyWith({Exercise? exercise, int? Function()? target}) => Movement(
         group: group,
         exercise: exercise ?? this.exercise,
         phase: phase,
+        target: target != null ? target() : this.target,
         weighted: weighted,
         isFocus: isFocus,
-        isBoss: isBoss ?? this.isBoss,
-        bossTarget: bossTarget ?? this.bossTarget,
-        suggestedReps: suggestedReps,
+        isBoss: isBoss,
       );
 }
 
@@ -178,6 +188,8 @@ class SessionResult {
     this.bossGroupId,
     this.bossWon = false,
     this.phaseUps = const {},
+    this.targetUps = const {},
+    this.calibratedTargets = const {},
     required this.playerLevelBefore,
     required this.playerLevelAfter,
   });
@@ -197,6 +209,13 @@ class SessionResult {
 
   /// groupId → nouvelle phase débloquée pendant cette séance.
   final Map<String, int> phaseUps;
+
+  /// exerciseId → (ancien objectif, nouvel objectif) relevé après maîtrise.
+  final Map<String, ({int from, int to})> targetUps;
+
+  /// exerciseId → objectif fixé par la calibration de cette séance.
+  final Map<String, int> calibratedTargets;
+
   final int playerLevelBefore;
   final int playerLevelAfter;
 }

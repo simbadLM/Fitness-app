@@ -125,38 +125,42 @@ void main() {
     });
   });
 
-  group('Rule of thumb & boss', () {
-    test('+2 reps sur la dernière série = amélioration', () {
+  group('Objectifs fixes, maîtrise & boss', () {
+    test('réussite de groupe : toutes les séries à l\'objectif', () {
+      const targets = {'x': 10};
+      const good = [
+        SetLog(exerciseId: 'x', groupId: 'g', phase: 1, round: 1, reps: 10),
+        SetLog(exerciseId: 'x', groupId: 'g', phase: 1, round: 2, reps: 11),
+      ];
+      const bad = [
+        SetLog(exerciseId: 'x', groupId: 'g', phase: 1, round: 1, reps: 10),
+        SetLog(exerciseId: 'x', groupId: 'g', phase: 1, round: 2, reps: 8),
+      ];
       expect(
-          Gamification.isImprovement(lastSetReps: 12, previousLastSetReps: 10),
+          Gamification.groupSucceeded(sets: good, targetByExercise: targets),
           isTrue);
       expect(
-          Gamification.isImprovement(lastSetReps: 11, previousLastSetReps: 10),
+          Gamification.groupSucceeded(sets: bad, targetByExercise: targets),
+          isFalse);
+      // Aucune série sur un exercice à objectif : pas une réussite.
+      expect(
+          Gamification.groupSucceeded(
+              sets: const [], targetByExercise: targets),
+          isFalse);
+      // Les séries d'exercices en calibration sont ignorées.
+      const onlyCalibration = [
+        SetLog(exerciseId: 'y', groupId: 'g', phase: 1, round: 1, reps: 3),
+      ];
+      expect(
+          Gamification.groupSucceeded(
+              sets: onlyCalibration, targetByExercise: targets),
           isFalse);
     });
 
-    test('compteur d\'améliorations consécutives', () {
-      expect(
-        Gamification.nextImprovementStreak(
-            current: 0, lastSetReps: 12, previousLastSetReps: 10),
-        1,
-      );
-      expect(
-        Gamification.nextImprovementStreak(
-            current: 1, lastSetReps: 14, previousLastSetReps: 12),
-        2,
-      );
-      expect(
-        Gamification.nextImprovementStreak(
-            current: 1, lastSetReps: 12, previousLastSetReps: 12),
-        0,
-      );
-      // Pas d'historique comparable : inchangé.
-      expect(
-        Gamification.nextImprovementStreak(
-            current: 1, lastSetReps: 12, previousLastSetReps: null),
-        1,
-      );
+    test('compteur de séances réussies consécutives', () {
+      expect(Gamification.nextSuccessStreak(current: 0, succeeded: true), 1);
+      expect(Gamification.nextSuccessStreak(current: 1, succeeded: true), 2);
+      expect(Gamification.nextSuccessStreak(current: 1, succeeded: false), 0);
     });
 
     test('statut boss dérivé du compteur', () {
@@ -174,15 +178,33 @@ void main() {
           BossStatus.normal);
     });
 
-    test('cible et victoire du boss', () {
-      expect(Gamification.bossTarget(10), 12);
-      expect(Gamification.bossTarget(null), 10);
-      const winning = [
-        SetLog(exerciseId: 'x', groupId: 'g', phase: 1, round: 1, reps: 8),
-        SetLog(exerciseId: 'x', groupId: 'g', phase: 1, round: 2, reps: 12),
+    test('seuil de maîtrise : 15 reps ou 60 s', () {
+      expect(Gamification.isMastered(target: 15, isDuration: false), isTrue);
+      expect(Gamification.isMastered(target: 14, isDuration: false), isFalse);
+      expect(Gamification.isMastered(target: 60, isDuration: true), isTrue);
+      expect(Gamification.isMastered(target: 45, isDuration: true), isFalse);
+    });
+
+    test('calibration : ~70 % du meilleur effort, avec plancher', () {
+      expect(Gamification.calibrationTarget(best: 20, isDuration: false), 14);
+      expect(Gamification.calibrationTarget(best: 4, isDuration: false), 5);
+      expect(Gamification.calibrationTarget(best: 60, isDuration: true), 42);
+      expect(Gamification.calibrationTarget(best: 10, isDuration: true), 15);
+    });
+
+    test('boss vaincu : toutes les séries tiennent l\'objectif relevé', () {
+      const allHold = [
+        SetLog(exerciseId: 'x', groupId: 'g', phase: 1, round: 1, reps: 12),
+        SetLog(exerciseId: 'x', groupId: 'g', phase: 1, round: 2, reps: 13),
       ];
-      expect(Gamification.bossDefeated(bossSets: winning, target: 12), isTrue);
-      expect(Gamification.bossDefeated(bossSets: winning, target: 13), isFalse);
+      const oneFails = [
+        SetLog(exerciseId: 'x', groupId: 'g', phase: 1, round: 1, reps: 12),
+        SetLog(exerciseId: 'x', groupId: 'g', phase: 1, round: 2, reps: 11),
+      ];
+      expect(Gamification.bossDefeated(bossSets: allHold, target: 12), isTrue);
+      expect(
+          Gamification.bossDefeated(bossSets: oneFails, target: 12), isFalse);
+      expect(Gamification.bossDefeated(bossSets: const [], target: 12), isFalse);
     });
   });
 
