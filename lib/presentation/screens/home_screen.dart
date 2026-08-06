@@ -294,13 +294,13 @@ class _JourneyTimeline extends StatelessWidget {
             LayoutBuilder(
               builder: (context, constraints) {
                 final w = constraints.maxWidth;
+                // Marqueur toujours contenu dans la carte, même au jour 0 ou 365.
                 final x = (dayNumber / Journey.totalDays * w)
-                    .clamp(0.0, w)
+                    .clamp(6.0, w - 6.0)
                     .toDouble();
                 return SizedBox(
                   height: 26,
                   child: Stack(
-                    clipBehavior: Clip.none,
                     children: [
                       Positioned(
                         top: 10,
@@ -511,19 +511,28 @@ class _TrackCard extends StatelessWidget {
                                     : _DotState.locked,
                           ),
                           if (p < MuscleGroup.maxPhase)
-                            Container(
-                              width: 24,
-                              height: 3,
-                              color: p < progress.phase
-                                  ? scheme.primary
-                                  : scheme.surfaceContainerHighest,
+                            Expanded(
+                              child: Container(
+                                height: 3,
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 2),
+                                color: p < progress.phase
+                                    ? scheme.primary
+                                    : scheme.surfaceContainerHighest,
+                              ),
                             ),
                         ],
-                        const SizedBox(width: 12),
-                        PhasePill(
-                          phase: progress.phase,
-                          label:
-                              '${group.phaseLabel(progress.phase)} · Niv. ${progress.levelInPhase}',
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: PhasePill(
+                            phase: progress.phase,
+                            label:
+                                '${group.phaseLabel(progress.phase)} · Niv. ${progress.levelInPhase}',
+                          ),
                         ),
                       ],
                     ),

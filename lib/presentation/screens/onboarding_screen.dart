@@ -141,12 +141,23 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               SegmentedButton<int>(
                 segments: [
                   for (final (phase, label, _) in _placementLevels)
-                    ButtonSegment(value: phase, label: Text(label)),
+                    ButtonSegment(
+                      value: phase,
+                      label: Text(label,
+                          maxLines: 1, overflow: TextOverflow.ellipsis),
+                    ),
                 ],
                 selected: {_placement[group.id] ?? 1},
                 onSelectionChanged: (s) =>
                     setState(() => _placement[group.id] = s.first),
                 showSelectedIcon: false,
+                style: const ButtonStyle(
+                  visualDensity: VisualDensity.compact,
+                  textStyle: WidgetStatePropertyAll(
+                      TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
+                  padding: WidgetStatePropertyAll(
+                      EdgeInsets.symmetric(horizontal: 8)),
+                ),
               ),
               const SizedBox(height: 4),
               Text(

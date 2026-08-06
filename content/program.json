@@ -263,14 +263,14 @@
               "name": "Step-Ups",
               "note": "small step/chair",
               "equipment": [],
-              "picto": "lunge"
+              "picto": "stepup"
             },
             {
               "id": "calf-raises",
               "name": "Calf Raises",
               "note": "bodyweight",
               "equipment": [],
-              "picto": "squat"
+              "picto": "calfraise"
             }
           ]
         },
@@ -313,7 +313,7 @@
               "id": "jump-squats-p2",
               "name": "Jump Squats",
               "equipment": [],
-              "picto": "squat"
+              "picto": "jumpsquat"
             },
             {
               "id": "jump-lunges",
@@ -354,7 +354,7 @@
               "id": "jump-squats-p3",
               "name": "Jump Squats",
               "equipment": [],
-              "picto": "squat"
+              "picto": "jumpsquat"
             },
             {
               "id": "weighted-step-ups",
@@ -364,7 +364,7 @@
                 "kettlebell",
                 "backpack"
               ],
-              "picto": "lunge"
+              "picto": "stepup"
             },
             {
               "id": "romanian-deadlifts",
@@ -434,7 +434,7 @@
               "id": "dead-bugs",
               "name": "Dead Bugs",
               "equipment": [],
-              "picto": "crunch"
+              "picto": "deadbug"
             },
             {
               "id": "crunches",
@@ -447,7 +447,7 @@
               "name": "Leg Raises",
               "note": "on floor",
               "equipment": [],
-              "picto": "crunch"
+              "picto": "legraise"
             },
             {
               "id": "plank-p1",
@@ -473,7 +473,7 @@
               "id": "v-ups",
               "name": "V-Ups",
               "equipment": [],
-              "picto": "crunch"
+              "picto": "vup"
             },
             {
               "id": "hanging-knee-raises",
@@ -482,7 +482,7 @@
               "equipment": [
                 "pullupBar"
               ],
-              "picto": "pullup"
+              "picto": "hangraise"
             },
             {
               "id": "side-planks",
@@ -497,7 +497,7 @@
               "name": "Russian Twists",
               "note": "KB optional",
               "equipment": [],
-              "picto": "crunch"
+              "picto": "twist"
             },
             {
               "id": "kb-marches",
@@ -517,7 +517,7 @@
               "id": "mountain-climbers",
               "name": "Mountain Climbers",
               "equipment": [],
-              "picto": "plank"
+              "picto": "climber"
             },
             {
               "id": "kb-swings-abs",
@@ -540,7 +540,7 @@
               "equipment": [
                 "pullupBar"
               ],
-              "picto": "pullup"
+              "picto": "hangraise"
             },
             {
               "id": "toe-to-bar-progressions",
@@ -549,7 +549,7 @@
               "equipment": [
                 "pullupBar"
               ],
-              "picto": "pullup"
+              "picto": "hangraise"
             },
             {
               "id": "plank-walkouts",
@@ -563,7 +563,7 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "crunch"
+              "picto": "situp"
             },
             {
               "id": "kb-overhead-marches",

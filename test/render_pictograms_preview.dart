@@ -15,8 +15,8 @@ void main() {
 
   testWidgets('rendu des pictogrammes', (tester) async {
     if (!enabled) return;
-    await tester.binding.setSurfaceSize(const Size(1000, 1000));
-    tester.view.physicalSize = const Size(1000, 1000);
+    await tester.binding.setSurfaceSize(const Size(1000, 1500));
+    tester.view.physicalSize = const Size(1000, 1500);
     tester.view.devicePixelRatio = 1.0;
 
     await tester.pumpWidget(MaterialApp(
@@ -25,15 +25,16 @@ void main() {
         body: RepaintBoundary(
           key: const Key('grid'),
           child: GridView.count(
-            crossAxisCount: 4,
+            crossAxisCount: 5,
+            childAspectRatio: 0.8,
             children: [
               for (final t in PictoType.values)
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     AnimatedPictogram(
-                        type: t, size: 170, color: const Color(0xFF121830)),
-                    Text(t.name, style: const TextStyle(fontSize: 14)),
+                        type: t, size: 150, color: const Color(0xFF121830)),
+                    Text(t.name, style: const TextStyle(fontSize: 13)),
                   ],
                 ),
             ],
