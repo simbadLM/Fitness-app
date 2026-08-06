@@ -1,6 +1,6 @@
 # Fitness Game 🏋️
 
-Application Android (Flutter) qui transforme le guide **DailyRepsGuy —
+Application Android & iOS (Flutter) qui transforme le guide **DailyRepsGuy —
 "How to Get Jacked in Under 20 Minutes a Day"** en jeu : circuits de 20 minutes
 à la maison, progression par phases qui se débloquent en battant des **boss**,
 XP, badges et série de jours (streak).
@@ -50,8 +50,27 @@ flutter run                   # sur un appareil/émulateur Android
 flutter build apk --release   # APK installable
 ```
 
-## APK sans installation locale
+## Builds sans installation locale
 
-Chaque push déclenche la CI GitHub Actions (analyse + tests + build). L'APK
-release est publié en **artefact** du workflow : onglet *Actions* → dernier
-run → *Artifacts* → `fitness-game-apk`.
+Chaque push déclenche la CI GitHub Actions (analyse + tests + builds). Les
+binaires sont publiés en **artefacts** du workflow : onglet *Actions* →
+dernier run → *Artifacts*.
+
+### Android — `fitness-game-apk`
+APK release directement installable (autoriser les sources inconnues).
+
+### iOS — `fitness-game-ios-unsigned-ipa`
+IPA compilé sur un runner macOS mais **non signé** (Apple exige une signature
+pour installer une app). Options d'installation sur iPhone :
+
+1. **Sideloading avec un identifiant Apple gratuit** : outils comme
+   [Sideloadly](https://sideloadly.io) ou [AltStore](https://altstore.io)
+   signent l'IPA avec votre Apple ID et l'installent depuis un PC/Mac.
+   Limite du compte gratuit : l'app expire au bout de 7 jours (ré-installation
+   en un clic), 3 apps maximum.
+2. **Compte Apple Developer (99 $/an)** : signature durable, distribution
+   TestFlight ou App Store. Le build local se fait alors sur Mac :
+   `flutter build ipa` puis upload via Xcode/Transporter.
+3. **Xcode sur Mac** : brancher l'iPhone et `flutter run --release`
+   (signature développeur automatique, expire en 7 jours avec un compte
+   gratuit).

@@ -6,7 +6,7 @@ on:
   pull_request:
 
 jobs:
-  build:
+  build-android:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -38,3 +38,31 @@ jobs:
         with:
           name: fitness-game-apk
           path: build/app/outputs/flutter-apk/app-release.apk
+
+  build-ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Dépendances
+        run: flutter pub get
+
+      - name: Build iOS (release, non signé)
+        run: flutter build ios --release --no-codesign
+
+      - name: Empaqueter en IPA non signé
+        run: |
+          mkdir -p Payload
+          cp -r build/ios/iphoneos/Runner.app Payload/
+          zip -qry fitness-game-unsigned.ipa Payload
+
+      - name: Publier l'IPA en artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: fitness-game-ios-unsigned-ipa
+          path: fitness-game-unsigned.ipa
