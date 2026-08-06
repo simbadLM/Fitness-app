@@ -1,42 +1,47 @@
-# Fitness Game 🏋️
+# 365
 
-Application Android & iOS (Flutter) qui transforme le guide **DailyRepsGuy —
-"How to Get Jacked in Under 20 Minutes a Day"** en jeu : circuits de 20 minutes
-à la maison, progression par phases qui se débloquent en battant des **boss**,
-XP, badges et série de jours (streak).
+**Deviens fit en 365 jours d'entraînement de 20 minutes par jour.**
 
-Cahier des charges complet : [`CAHIER_DES_CHARGES.md`](CAHIER_DES_CHARGES.md).
-Guide source : [`docs/DailyRepsGuy-Workout-Guide.pdf`](docs/DailyRepsGuy-Workout-Guide.pdf).
+Application Android & iOS (Flutter). Chaque jour, un circuit de 20 minutes à
+la maison ; chaque séance fait avancer ton compteur — **Jour N / 365** — vers
+la meilleure version de toi-même. La progression est un voyage en trois arcs :
+
+1. **Apprentissage · Reprise** — on apprend les gestes, on retrouve son corps.
+2. **Consolidation** — l'habitude s'installe, la forme revient.
+3. **Athlétisation** — le corps devient athlète *(puis l'arc **Maîtrise**,
+   sous charge)*.
+
+Cahier des charges : [`CAHIER_DES_CHARGES.md`](CAHIER_DES_CHARGES.md).
 
 ## Fonctionnalités
 
-- **Quête du jour** : circuit AMRAP généré selon la méthode du guide —
-  1 exercice par groupe musculaire (Bras/Pecs, Jambes, Abdos, Dos) dans sa
-  phase courante + exercice focus du jour, minuteur 20 min, repos chronométré.
-- **4 pistes de progression indépendantes** : chaque groupe musculaire a sa
-  phase (Beginner → Intermediate → Advanced → Pro).
-- **Boss fights automatiques** : la *rule of thumb* du guide (+2 reps sur la
-  dernière série, 2 séances de suite) est détectée par l'app, qui annonce le
-  boss à l'avance ; le vaincre débloque la phase suivante.
-- **Saisie des répétitions à chaque série** : molette + incrément/décrément,
-  préremplie avec la dernière performance.
-- **Matériel** : les exercices proposés s'adaptent au matériel déclaré
-  (kettlebell, barre de traction, chaise, sac à dos…).
-- **Pictogrammes animés** dessinés en vectoriel (aucune image embarquée).
-- **XP, niveaux, badges, streak** compatible avec les jours de repos planifiés.
-- **100 % local** : profil dans les préférences, historique dans SQLite (drift).
-  Aucune donnée ne quitte le téléphone.
+- **Jour N / 365** en héros de l'accueil, avec timeline projetée des arcs.
+- **Quête du jour** : circuit AMRAP — 1 exercice par groupe musculaire
+  (Bras/Pecs, Jambes, Abdos, Dos) + focus du jour, objectifs de répétitions
+  fixes, **le score = le nombre de tours**.
+- **Placement & calibration** : quiz de niveau à l'onboarding, puis la
+  première pratique de chaque exercice calibre ton objectif (~70 % du max).
+- **Progression organique** : objectifs tenus 2 séances de suite → +2 reps
+  (niveau suivant dans l'arc) ; au seuil de maîtrise → **boss fight** à
+  objectifs relevés → arc suivant débloqué. Phases indépendantes par groupe.
+- **XP, niveaux, badges, streak** respectant les jours de repos planifiés.
+- **Matériel** : exercices filtrés selon ce que tu possèdes.
+- **Pictogrammes animés** vectoriels avec accessoires dessinés.
+- **Design « à la française »** : bleu nuit, ivoire, filets or, Playfair Display.
+- **100 % local** : profil et historique (SQLite/drift) sur l'appareil.
 
 ## Architecture
 
 ```
 lib/
-  domain/        modèles + moteur de gamification + générateur de séances
+  domain/        modèles + moteur de gamification + générateur + voyage 365
                  (Dart pur, testé unitairement)
   data/          base drift (SQLite), dépôts, service de fin de séance
-  presentation/  écrans, thème Material 3, pictogrammes animés (CustomPainter)
+  presentation/  écrans, thème, pictogrammes animés (CustomPainter)
 content/
-  program.json   catalogue exercices/phases extrait du guide (source de vérité)
+  program.json   catalogue exercices/phases (source de vérité du contenu)
+assets/icon/     logo 365 (généré, décliné via flutter_launcher_icons)
+fonts/           Playfair Display
 ```
 
 ## Développement
@@ -46,8 +51,8 @@ flutter pub get
 dart run build_runner build   # génération drift (db.g.dart)
 flutter analyze
 flutter test
-flutter run                   # sur un appareil/émulateur Android
-flutter build apk --release   # APK installable
+flutter run                   # sur un appareil/émulateur
+flutter build apk --release   # APK Android installable
 ```
 
 ## Builds sans installation locale
@@ -69,8 +74,5 @@ pour installer une app). Options d'installation sur iPhone :
    Limite du compte gratuit : l'app expire au bout de 7 jours (ré-installation
    en un clic), 3 apps maximum.
 2. **Compte Apple Developer (99 $/an)** : signature durable, distribution
-   TestFlight ou App Store. Le build local se fait alors sur Mac :
-   `flutter build ipa` puis upload via Xcode/Transporter.
-3. **Xcode sur Mac** : brancher l'iPhone et `flutter run --release`
-   (signature développeur automatique, expire en 7 jours avec un compte
-   gratuit).
+   TestFlight ou App Store.
+3. **Xcode sur Mac** : brancher l'iPhone et `flutter run --release`.

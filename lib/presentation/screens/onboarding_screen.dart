@@ -30,11 +30,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
   final Map<String, int> _placement = {};
   bool _saving = false;
 
-  /// Checklist de placement du guide, condensée par phase.
+  /// Placement dans l'arc du voyage, par groupe musculaire.
   static const _placementLevels = [
-    (1, 'Débutant', 'J\'apprends les mouvements, ma forme casse vite'),
-    (2, 'Intermédiaire', 'Forme correcte, challengé mais capable'),
-    (3, 'Avancé', 'Je domine, il me faut du lesté ou de l\'explosif'),
+    (1, 'Apprentissage', 'J\'apprends les mouvements, ma forme casse vite'),
+    (2, 'Consolidation', 'Forme correcte, challengé mais capable'),
+    (3, 'Athlétisation', 'Je domine, il me faut du lesté ou de l\'explosif'),
   ];
 
   @override
@@ -71,17 +71,20 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           padding: const EdgeInsets.all(24),
           children: [
             const SizedBox(height: 24),
-            Text('Fitness Game',
+            Text('365',
                 style: TextStyle(
-                  fontSize: 34,
-                  fontWeight: FontWeight.w900,
-                  letterSpacing: -1,
-                  color: scheme.primary,
+                  fontFamily: 'Playfair',
+                  fontSize: 56,
+                  fontWeight: FontWeight.w700,
+                  color: scheme.onSurface,
                 )),
             const SizedBox(height: 8),
             Text(
-              'Des séances de 20 minutes à la maison.\nProgresse, débloque des phases, bats tes boss.',
-              style: TextStyle(fontSize: 16, color: scheme.onSurfaceVariant),
+              '20 minutes par jour, chez toi.\nDans 365 jours d\'entraînement, tu ne te reconnaîtras plus.',
+              style: TextStyle(
+                  fontSize: 16,
+                  fontStyle: FontStyle.italic,
+                  color: scheme.onSurfaceVariant),
             ),
             const SizedBox(height: 32),
             const _SectionTitle('Ton prénom ou pseudo'),
@@ -191,11 +194,11 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             const SizedBox(height: 32),
             FilledButton(
               onPressed: _valid && !_saving ? _start : null,
-              child: const Text('Commencer l\'aventure'),
+              child: const Text('Commencer le jour 1'),
             ),
             const SizedBox(height: 16),
             Text(
-              'Programme basé sur le guide DailyRepsGuy.\nToutes tes données restent sur ton téléphone.',
+              'Toutes tes données restent sur ton téléphone.',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
             ),

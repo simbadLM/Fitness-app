@@ -84,8 +84,13 @@ class GameRepository {
             groupId: r.groupId,
             phase: r.phase,
             improvementStreak: r.improvementStreak,
+            levelInPhase: r.levelInPhase,
           ),
       };
+
+  /// Numéro du jour d'entraînement (nombre de jours distincts avec séance).
+  Stream<int> watchDayNumber() => db.select(db.sessions).watch().map((rows) =>
+      rows.map((s) => DateTime(s.date.year, s.date.month, s.date.day)).toSet().length);
 
   Future<void> ensureProgressRows(Iterable<String> groupIds) async {
     for (final id in groupIds) {
@@ -199,6 +204,13 @@ class WorkoutService {
     final player = await repo.getPlayer();
     final progress = await repo.getProgress();
 
+    // Numéro du jour du voyage 365 (jours distincts avec séance, aujourd'hui inclus).
+    final trainedDays = (await db.select(db.sessions).get())
+        .map((s) => DateTime(s.date.year, s.date.month, s.date.day))
+        .toSet()
+      ..add(DateTime(today.year, today.month, today.day));
+    final dayNumber = trainedDays.length;
+
     // --- Boss fight : toutes les séries du mouvement boss à l'objectif +2 ---
     final bossGroupId = plan.bossGroupId;
     var bossWon = false;
@@ -257,8 +269,8 @@ class WorkoutService {
         if (bossWon) {
           final newPhase = current.phase + 1;
           phaseUps[groupId] = newPhase;
-          progressUpdates[groupId] =
-              current.copyWith(phase: newPhase, improvementStreak: 0);
+          progressUpdates[groupId] = current.copyWith(
+              phase: newPhase, improvementStreak: 0, levelInPhase: 1);
         }
         // Boss perdu : le compteur reste à 2, le boss se représentera.
         continue;
@@ -276,8 +288,10 @@ class WorkoutService {
       var nextStreak = Gamification.nextSuccessStreak(
           current: current.improvementStreak, succeeded: succeeded);
 
+      var levelInPhase = current.levelInPhase;
       if (nextStreak >= 2 && current.phase < 4) {
-        // Maîtrise atteinte → boss prêt ; sinon micro-progression +2 et on repart.
+        // Maîtrise atteinte → boss prêt ; sinon micro-progression +2,
+        // niveau suivant dans la phase, et on repart.
         final allMastered = entry.value.every((m) =>
             m.target == null ||
             Gamification.isMastered(
@@ -292,11 +306,13 @@ class WorkoutService {
             targetUps[m.exercise.id] = (from: m.target!, to: to);
           }
           nextStreak = 0;
+          levelInPhase += 1;
         }
       }
-      if (nextStreak != current.improvementStreak) {
-        progressUpdates[groupId] =
-            current.copyWith(improvementStreak: nextStreak);
+      if (nextStreak != current.improvementStreak ||
+          levelInPhase != current.levelInPhase) {
+        progressUpdates[groupId] = current.copyWith(
+            improvementStreak: nextStreak, levelInPhase: levelInPhase);
       }
     }
 
@@ -345,6 +361,7 @@ class WorkoutService {
                 groupId: p.groupId,
                 phase: Value(p.phase),
                 improvementStreak: Value(p.improvementStreak),
+                levelInPhase: Value(p.levelInPhase),
               ),
               mode: InsertMode.insertOrReplace,
             );
@@ -394,6 +411,7 @@ class WorkoutService {
       calibratedTargets: calibratedTargets,
       playerLevelBefore: levelBefore,
       playerLevelAfter: levelAfter,
+      dayNumber: dayNumber,
     );
   }
 }

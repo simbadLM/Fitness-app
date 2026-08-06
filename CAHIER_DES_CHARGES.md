@@ -1,15 +1,15 @@
-# Cahier des charges — Application sportive gamifiée (Android)
+# Cahier des charges — 365 (Android & iOS)
 
-> **Version 1.0** — cadrage complet : guide analysé, toutes les décisions
-> produit actées. Contenu extrait dans `content/program.json`
-> (source : `docs/DailyRepsGuy-Workout-Guide.pdf`).
+> **Version 2.0 « 365 »** — rebranding et concept produit finalisés.
+> Contenu d'entraînement dans `content/program.json`.
 
 ## 1. Vision
 
-Transformer le guide **DailyRepsGuy — "How to Get Jacked in Under 20 Minutes a
-Day"** en application Android interactive et gamifiée : des séances de 20 minutes
-maximum, à la maison, avec une progression par phases qui se débloque comme dans
-un jeu.
+**365** : deviens fit en 365 jours d'entraînement de 20 minutes par jour.
+L'app matérialise le voyage — le numéro du jour (Jour N / 365) est le héros de
+l'accueil — avec une progression par arcs qui se débloquent comme dans un jeu :
+**Apprentissage · Reprise** → **Consolidation** → **Athlétisation** (puis
+**Maîtrise**, sous charge), chacun contenant des niveaux (+2 répétitions).
 
 ## 2. Décisions actées
 
@@ -20,16 +20,18 @@ un jeu.
 | Persistance | **100 % local, sans compte** (drift/SQLite + préférences) |
 | Gamification | **Niveaux + XP + badges + streaks** |
 | Profil | Homme / femme dès l'onboarding |
-| Contenu | Guide DailyRepsGuy, versionné en JSON dans les assets |
+| Contenu | Catalogue d'exercices maison, versionné en JSON dans les assets |
 
-## 3. Analyse du guide (synthèse)
+## 3. La méthode d'entraînement (synthèse)
 
-Le guide ne définit **pas un programme linéaire de séances** mais une **méthode** :
+La méthode n'est **pas un programme linéaire de séances** :
 
 - **4 groupes musculaires** : Bras & Pectoraux, Jambes, Abdominaux, Dos.
-- **4 phases par groupe** : Beginner, Intermediate, Advanced, Pro (= Advanced
-  avec du lest). Chaque phase liste 4 à 9 exercices réalisables à la maison
-  (poids du corps, kettlebell, sac à dos, chaise).
+- **4 phases par groupe** : Apprentissage · Reprise, Consolidation,
+  Athlétisation, Maîtrise (= Athlétisation avec du lest). Chaque phase liste
+  4 à 9 exercices réalisables à la maison (poids du corps, kettlebell, sac à
+  dos, chaise), et contient des **niveaux** (chaque relèvement d'objectifs
+  de +2 répétitions = un niveau).
 - **La phase est indépendante par groupe musculaire** : on peut être Phase 3
   jambes et Phase 1 dos — l'app doit gérer 4 curseurs de progression distincts.
 - **Format de séance** : circuit AMRAP de 20 min max — 1 exercice par groupe
@@ -44,11 +46,9 @@ Le guide ne définit **pas un programme linéaire de séances** mais une **méth
     volume, amplitude.
 - **Semaine type** : 5–6 séances avec rotation du focus (lun. bras/pecs,
   mar. jambes, jeu. abdos, ven. dos, sam. libre), repos mercredi et dimanche.
-- Le guide insiste sur la **constance** ("keep stacking daily wins") et
-  l'**accountability** → cœur de la gamification (streaks, badges).
-- Le guide est **unisexe** : le choix homme/femme du profil n'affecte pas le
-  contenu ; il sert à la personnalisation (avatar, formulations, et
-  éventuellement statistiques futures).
+- La **constance** est le cœur du produit : 365 jours, streaks, badges.
+- Le contenu est **unisexe** : le choix homme/femme du profil sert à la
+  personnalisation (formulations, avatar futur), pas au contenu.
 
 ## 4. Transposition en jeu (proposition)
 
@@ -60,7 +60,7 @@ répétitions enregistrées) et propose un "combat de boss" : une séance test q
 réussie, débloque la phase avec animation de récompense.
 
 ### 4.2 La séance quotidienne ("quête du jour")
-L'app génère le circuit du jour selon la méthode du guide : 1 exercice par
+L'app génère le circuit du jour selon la méthode du programme : 1 exercice par
 groupe tiré de la phase courante + focus du jour (rotation hebdomadaire),
 minuteur 20 min, compteur de tours et de répétitions, repos chronométré 10–45 s.
 L'utilisateur peut échanger un exercice proposé contre un autre de la même phase.
@@ -70,12 +70,12 @@ L'utilisateur peut échanger un exercice proposé contre un autre de la même ph
 - Niveau de joueur global (distinct des phases) avec seuils croissants.
 - Badges : première séance, 7/30/100 jours de streak, phase débloquée,
   record de tours battu, groupe au niveau Pro, etc.
-- **Streak compatible avec les jours de repos** : le guide prescrit 2 jours de
+- **Streak compatible avec les jours de repos** : le programme prescrit 2 jours de
   repos/semaine → la série n'est pas cassée par un jour de repos planifié.
 
 ### 4.4 Statistiques
 Historique des séances, répétitions totales par groupe, graphique de
-progression (le signal +10–20 % du guide devient une jauge visible), records.
+progression (le signal +10–20 % du programme devient une jauge visible), records.
 
 ## 5. Architecture technique (niveau ingénieur)
 
@@ -93,7 +93,7 @@ progression (le signal +10–20 % du guide devient une jauge visible), records.
 presentation/   écrans, widgets, animations (dépend de domain)
 domain/         entités, use cases, moteur de gamification (pur Dart, 100 % testable)
 data/           repositories, drift, préférences (implémente les interfaces de domain)
-content/        program.json — catalogue exercices/phases extrait du guide
+content/        program.json — catalogue exercices/phases extrait du programme
 ```
 
 ### 5.3 Modèle de données
@@ -115,20 +115,27 @@ content/        program.json — catalogue exercices/phases extrait du guide
    faits passent par une **calibration** (saisie du maximum propre →
    objectif fixé à ~70 %, tenable en circuit).
 2. **Évaluation du niveau de départ** *(révision v2.1)* : **quiz de
-   placement** à l'onboarding (la checklist du guide, une question par
+   placement** à l'onboarding (la checklist du programme, une question par
    groupe musculaire → phase 1/2/3) + **première séance de calibration**
    pour les objectifs de répétitions.
 3. **Progression & boss fight** *(révision v2.1)* : objectifs tenus sur
    toutes les séries d'un groupe = séance réussie. 2 réussites consécutives →
    si les objectifs sont sous le seuil de maîtrise (15 reps / 60 s), ils
-   sont **relevés de +2** (micro-progression du guide) ; s'ils sont au
+   sont **relevés de +2** (micro-progression du programme) ; s'ils sont au
    seuil, le **boss fight** est annoncé : séance à objectifs **+2** à tenir
    sur tous les tours → phase débloquée. Boss perdu = boss représenté.
 4. **Matériel** : les exercices proposés sont **filtrés selon le matériel
    déclaré** dans le profil (kettlebell, barre de traction, chaise, sac à
    dos, barres parallèles, gilet lesté).
 5. **Illustrations** : **pictogrammes animés** (dessinés en vectoriel dans
-   l'app, un type de pictogramme par famille de mouvement).
-6. **Nom** : **Fitness Game**. Direction artistique : univers propre,
-   élégant, moderne, simple.
-7. **Plateformes** : Android + iOS (v2), builds produits par la CI.
+   l'app — silhouette de profil à deux bras/jambes, accessoires dessinés :
+   barre, barres parallèles, chaise, kettlebell).
+6. **Nom & concept** *(révision v3)* : l'app s'appelle **365** — deviens fit
+   en 365 jours d'entraînement de 20 minutes. Le **numéro du jour
+   (Jour N / 365)** est le héros de l'accueil ; une **timeline projetée**
+   des arcs (Apprentissage · Reprise → Consolidation → Athlétisation →
+   Maîtrise) donne la dimension philosophique du voyage.
+7. **Direction artistique** *(révision v3)* : « à la française » — bleu
+   nuit, ivoire, filets or, titres et chiffres en Playfair Display ; logo
+   « 365 · JOURS » bleu nuit et or décliné en icônes Android/iOS.
+8. **Plateformes** : Android + iOS (v2), builds produits par la CI.

@@ -60,10 +60,14 @@ class GroupProgress {
     required this.groupId,
     this.phase = 1,
     this.improvementStreak = 0,
+    this.levelInPhase = 1,
   });
 
   final String groupId;
   final int phase;
+
+  /// Niveau au sein de la phase : +1 à chaque relèvement d'objectifs.
+  final int levelInPhase;
 
   /// Séances consécutives où tous les objectifs du groupe ont été tenus.
   /// 0 = normal, 1 = boss en approche, >= 2 = boss fight prêt (le compteur
@@ -71,10 +75,13 @@ class GroupProgress {
   /// sont relevés de +2 et le compteur repart à 0 — micro-progression).
   final int improvementStreak;
 
-  GroupProgress copyWith({int? phase, int? improvementStreak}) => GroupProgress(
+  GroupProgress copyWith(
+          {int? phase, int? improvementStreak, int? levelInPhase}) =>
+      GroupProgress(
         groupId: groupId,
         phase: phase ?? this.phase,
         improvementStreak: improvementStreak ?? this.improvementStreak,
+        levelInPhase: levelInPhase ?? this.levelInPhase,
       );
 }
 
@@ -192,6 +199,7 @@ class SessionResult {
     this.calibratedTargets = const {},
     required this.playerLevelBefore,
     required this.playerLevelAfter,
+    this.dayNumber = 1,
   });
 
   final int xpTotal;
@@ -218,4 +226,7 @@ class SessionResult {
 
   final int playerLevelBefore;
   final int playerLevelAfter;
+
+  /// Numéro du jour d'entraînement dans le voyage (1 → 365), après la séance.
+  final int dayNumber;
 }

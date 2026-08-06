@@ -44,6 +44,10 @@ final playerProvider = StreamProvider<PlayerSnapshot>(
 final progressProvider = StreamProvider<Map<String, GroupProgress>>(
     (ref) => ref.watch(gameRepoProvider).watchProgress());
 
+/// Numéro du jour dans le voyage 365 (jours distincts avec séance).
+final dayNumberProvider =
+    StreamProvider<int>((ref) => ref.watch(gameRepoProvider).watchDayNumber());
+
 final _router = GoRouter(
   routes: [
     GoRoute(path: '/', builder: (context, state) => const HomeScreen()),

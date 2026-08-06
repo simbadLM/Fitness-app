@@ -93,7 +93,7 @@ class SettingsTab extends ConsumerWidget {
           const SizedBox(height: 24),
           Center(
             child: Text(
-              'Fitness Game v1.0\nProgramme basé sur le guide DailyRepsGuy.\n100 % local : tes données ne quittent jamais ton téléphone.',
+              '365 — deviens fit en 365 jours de 20 minutes.\n100 % local : tes données ne quittent jamais ton téléphone.',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
             ),

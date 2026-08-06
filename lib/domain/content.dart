@@ -127,7 +127,7 @@ class MuscleGroup {
       );
 }
 
-/// Paramètres de la méthode DailyRepsGuy.
+/// Paramètres de la méthode d'entraînement (circuits AMRAP de 20 minutes).
 class Method {
   const Method({
     this.sessionDuration = const Duration(minutes: 20),

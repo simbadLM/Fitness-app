@@ -1261,8 +1261,25 @@ class $GroupProgressRowsTable extends GroupProgressRows
     requiredDuringInsert: false,
     defaultValue: const Constant(0),
   );
+  static const VerificationMeta _levelInPhaseMeta = const VerificationMeta(
+    'levelInPhase',
+  );
   @override
-  List<GeneratedColumn> get $columns => [groupId, phase, improvementStreak];
+  late final GeneratedColumn<int> levelInPhase = GeneratedColumn<int>(
+    'level_in_phase',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultValue: const Constant(1),
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    groupId,
+    phase,
+    improvementStreak,
+    levelInPhase,
+  ];
   @override
   String get aliasedName => _alias ?? actualTableName;
   @override
@@ -1298,6 +1315,15 @@ class $GroupProgressRowsTable extends GroupProgressRows
         ),
       );
     }
+    if (data.containsKey('level_in_phase')) {
+      context.handle(
+        _levelInPhaseMeta,
+        levelInPhase.isAcceptableOrUnknown(
+          data['level_in_phase']!,
+          _levelInPhaseMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -1319,6 +1345,10 @@ class $GroupProgressRowsTable extends GroupProgressRows
         DriftSqlType.int,
         data['${effectivePrefix}improvement_streak'],
       )!,
+      levelInPhase: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}level_in_phase'],
+      )!,
     );
   }
 
@@ -1333,10 +1363,14 @@ class GroupProgressRow extends DataClass
   final String groupId;
   final int phase;
   final int improvementStreak;
+
+  /// Niveau au sein de la phase : +1 à chaque relèvement d'objectifs (+2).
+  final int levelInPhase;
   const GroupProgressRow({
     required this.groupId,
     required this.phase,
     required this.improvementStreak,
+    required this.levelInPhase,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -1344,6 +1378,7 @@ class GroupProgressRow extends DataClass
     map['group_id'] = Variable<String>(groupId);
     map['phase'] = Variable<int>(phase);
     map['improvement_streak'] = Variable<int>(improvementStreak);
+    map['level_in_phase'] = Variable<int>(levelInPhase);
     return map;
   }
 
@@ -1352,6 +1387,7 @@ class GroupProgressRow extends DataClass
       groupId: Value(groupId),
       phase: Value(phase),
       improvementStreak: Value(improvementStreak),
+      levelInPhase: Value(levelInPhase),
     );
   }
 
@@ -1364,6 +1400,7 @@ class GroupProgressRow extends DataClass
       groupId: serializer.fromJson<String>(json['groupId']),
       phase: serializer.fromJson<int>(json['phase']),
       improvementStreak: serializer.fromJson<int>(json['improvementStreak']),
+      levelInPhase: serializer.fromJson<int>(json['levelInPhase']),
     );
   }
   @override
@@ -1373,6 +1410,7 @@ class GroupProgressRow extends DataClass
       'groupId': serializer.toJson<String>(groupId),
       'phase': serializer.toJson<int>(phase),
       'improvementStreak': serializer.toJson<int>(improvementStreak),
+      'levelInPhase': serializer.toJson<int>(levelInPhase),
     };
   }
 
@@ -1380,10 +1418,12 @@ class GroupProgressRow extends DataClass
     String? groupId,
     int? phase,
     int? improvementStreak,
+    int? levelInPhase,
   }) => GroupProgressRow(
     groupId: groupId ?? this.groupId,
     phase: phase ?? this.phase,
     improvementStreak: improvementStreak ?? this.improvementStreak,
+    levelInPhase: levelInPhase ?? this.levelInPhase,
   );
   GroupProgressRow copyWithCompanion(GroupProgressRowsCompanion data) {
     return GroupProgressRow(
@@ -1392,6 +1432,9 @@ class GroupProgressRow extends DataClass
       improvementStreak: data.improvementStreak.present
           ? data.improvementStreak.value
           : this.improvementStreak,
+      levelInPhase: data.levelInPhase.present
+          ? data.levelInPhase.value
+          : this.levelInPhase,
     );
   }
 
@@ -1400,49 +1443,57 @@ class GroupProgressRow extends DataClass
     return (StringBuffer('GroupProgressRow(')
           ..write('groupId: $groupId, ')
           ..write('phase: $phase, ')
-          ..write('improvementStreak: $improvementStreak')
+          ..write('improvementStreak: $improvementStreak, ')
+          ..write('levelInPhase: $levelInPhase')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(groupId, phase, improvementStreak);
+  int get hashCode =>
+      Object.hash(groupId, phase, improvementStreak, levelInPhase);
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       (other is GroupProgressRow &&
           other.groupId == this.groupId &&
           other.phase == this.phase &&
-          other.improvementStreak == this.improvementStreak);
+          other.improvementStreak == this.improvementStreak &&
+          other.levelInPhase == this.levelInPhase);
 }
 
 class GroupProgressRowsCompanion extends UpdateCompanion<GroupProgressRow> {
   final Value<String> groupId;
   final Value<int> phase;
   final Value<int> improvementStreak;
+  final Value<int> levelInPhase;
   final Value<int> rowid;
   const GroupProgressRowsCompanion({
     this.groupId = const Value.absent(),
     this.phase = const Value.absent(),
     this.improvementStreak = const Value.absent(),
+    this.levelInPhase = const Value.absent(),
     this.rowid = const Value.absent(),
   });
   GroupProgressRowsCompanion.insert({
     required String groupId,
     this.phase = const Value.absent(),
     this.improvementStreak = const Value.absent(),
+    this.levelInPhase = const Value.absent(),
     this.rowid = const Value.absent(),
   }) : groupId = Value(groupId);
   static Insertable<GroupProgressRow> custom({
     Expression<String>? groupId,
     Expression<int>? phase,
     Expression<int>? improvementStreak,
+    Expression<int>? levelInPhase,
     Expression<int>? rowid,
   }) {
     return RawValuesInsertable({
       if (groupId != null) 'group_id': groupId,
       if (phase != null) 'phase': phase,
       if (improvementStreak != null) 'improvement_streak': improvementStreak,
+      if (levelInPhase != null) 'level_in_phase': levelInPhase,
       if (rowid != null) 'rowid': rowid,
     });
   }
@@ -1451,12 +1502,14 @@ class GroupProgressRowsCompanion extends UpdateCompanion<GroupProgressRow> {
     Value<String>? groupId,
     Value<int>? phase,
     Value<int>? improvementStreak,
+    Value<int>? levelInPhase,
     Value<int>? rowid,
   }) {
     return GroupProgressRowsCompanion(
       groupId: groupId ?? this.groupId,
       phase: phase ?? this.phase,
       improvementStreak: improvementStreak ?? this.improvementStreak,
+      levelInPhase: levelInPhase ?? this.levelInPhase,
       rowid: rowid ?? this.rowid,
     );
   }
@@ -1473,6 +1526,9 @@ class GroupProgressRowsCompanion extends UpdateCompanion<GroupProgressRow> {
     if (improvementStreak.present) {
       map['improvement_streak'] = Variable<int>(improvementStreak.value);
     }
+    if (levelInPhase.present) {
+      map['level_in_phase'] = Variable<int>(levelInPhase.value);
+    }
     if (rowid.present) {
       map['rowid'] = Variable<int>(rowid.value);
     }
@@ -1485,6 +1541,7 @@ class GroupProgressRowsCompanion extends UpdateCompanion<GroupProgressRow> {
           ..write('groupId: $groupId, ')
           ..write('phase: $phase, ')
           ..write('improvementStreak: $improvementStreak, ')
+          ..write('levelInPhase: $levelInPhase, ')
           ..write('rowid: $rowid')
           ..write(')'))
         .toString();
@@ -2839,6 +2896,7 @@ typedef $$GroupProgressRowsTableCreateCompanionBuilder =
       required String groupId,
       Value<int> phase,
       Value<int> improvementStreak,
+      Value<int> levelInPhase,
       Value<int> rowid,
     });
 typedef $$GroupProgressRowsTableUpdateCompanionBuilder =
@@ -2846,6 +2904,7 @@ typedef $$GroupProgressRowsTableUpdateCompanionBuilder =
       Value<String> groupId,
       Value<int> phase,
       Value<int> improvementStreak,
+      Value<int> levelInPhase,
       Value<int> rowid,
     });
 
@@ -2870,6 +2929,11 @@ class $$GroupProgressRowsTableFilterComposer
 
   ColumnFilters<int> get improvementStreak => $composableBuilder(
     column: $table.improvementStreak,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get levelInPhase => $composableBuilder(
+    column: $table.levelInPhase,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -2897,6 +2961,11 @@ class $$GroupProgressRowsTableOrderingComposer
     column: $table.improvementStreak,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<int> get levelInPhase => $composableBuilder(
+    column: $table.levelInPhase,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$GroupProgressRowsTableAnnotationComposer
@@ -2916,6 +2985,11 @@ class $$GroupProgressRowsTableAnnotationComposer
 
   GeneratedColumn<int> get improvementStreak => $composableBuilder(
     column: $table.improvementStreak,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get levelInPhase => $composableBuilder(
+    column: $table.levelInPhase,
     builder: (column) => column,
   );
 }
@@ -2963,11 +3037,13 @@ class $$GroupProgressRowsTableTableManager
                 Value<String> groupId = const Value.absent(),
                 Value<int> phase = const Value.absent(),
                 Value<int> improvementStreak = const Value.absent(),
+                Value<int> levelInPhase = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => GroupProgressRowsCompanion(
                 groupId: groupId,
                 phase: phase,
                 improvementStreak: improvementStreak,
+                levelInPhase: levelInPhase,
                 rowid: rowid,
               ),
           createCompanionCallback:
@@ -2975,11 +3051,13 @@ class $$GroupProgressRowsTableTableManager
                 required String groupId,
                 Value<int> phase = const Value.absent(),
                 Value<int> improvementStreak = const Value.absent(),
+                Value<int> levelInPhase = const Value.absent(),
                 Value<int> rowid = const Value.absent(),
               }) => GroupProgressRowsCompanion.insert(
                 groupId: groupId,
                 phase: phase,
                 improvementStreak: improvementStreak,
+                levelInPhase: levelInPhase,
                 rowid: rowid,
               ),
           withReferenceMapper: (p0) => p0

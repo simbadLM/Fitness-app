@@ -121,7 +121,7 @@ class _PhaseSection extends StatelessWidget {
             if (content.rule != null) ...[
               const SizedBox(height: 8),
               Text(
-                'Tous les mouvements de la phase 3, avec du lest (gilet lesté ou kettlebell plus lourde).',
+                content.rule!,
                 style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
               ),
             ],

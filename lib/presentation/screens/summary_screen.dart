@@ -39,6 +39,18 @@ class SummaryScreen extends ConsumerWidget {
                           fontSize: 28, fontWeight: FontWeight.w900),
                     ),
                   ),
+                  const SizedBox(height: 4),
+                  Center(
+                    child: Text(
+                      'Jour ${result.dayNumber} / 365',
+                      style: const TextStyle(
+                        fontFamily: AppTheme.displayFont,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        color: AppTheme.or,
+                      ),
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Center(
                     child: TweenAnimationBuilder<int>(
@@ -112,7 +124,7 @@ class SummaryScreen extends ConsumerWidget {
                           const SizedBox(width: 12),
                           Expanded(
                             child: Text(
-                              'Phase ${entry.value} débloquée en ${program.group(entry.key).nameFr} !',
+                              '${program.group(entry.key).phaseLabel(entry.value)} débloquée en ${program.group(entry.key).nameFr} !',
                               style: const TextStyle(
                                   color: Colors.white,
                                   fontWeight: FontWeight.w800,

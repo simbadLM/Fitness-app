@@ -45,6 +45,9 @@ class GroupProgressRows extends Table {
   IntColumn get phase => integer().withDefault(const Constant(1))();
   IntColumn get improvementStreak => integer().withDefault(const Constant(0))();
 
+  /// Niveau au sein de la phase : +1 à chaque relèvement d'objectifs (+2).
+  IntColumn get levelInPhase => integer().withDefault(const Constant(1))();
+
   @override
   Set<Column> get primaryKey => {groupId};
 }
@@ -70,7 +73,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.withExecutor(super.executor);
 
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -83,6 +86,9 @@ class AppDatabase extends _$AppDatabase {
         },
         onUpgrade: (m, from, to) async {
           if (from < 2) await m.createTable(exerciseTargets);
+          if (from < 3) {
+            await m.addColumn(groupProgressRows, groupProgressRows.levelInPhase);
+          }
         },
       );
 

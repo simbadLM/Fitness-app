@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../app.dart';
 import '../../domain/content.dart';
 import '../../domain/gamification.dart';
+import '../../domain/journey.dart';
 import '../../domain/models.dart';
 import '../theme.dart';
 import '../widgets.dart';
@@ -73,31 +74,36 @@ class _HomeTab extends ConsumerWidget {
           (g, progress[g.id]!.bossStatus),
     ];
 
+    final dayNumber = ref.watch(dayNumberProvider).value ?? 0;
+    final arc = Journey.currentArc(progress.values);
+
     return SafeArea(
       child: ListView(
         padding: const EdgeInsets.all(20),
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Expanded(
-                child: Text(
-                  'Salut ${profile.name} !',
-                  style: const TextStyle(
-                      fontSize: 26, fontWeight: FontWeight.w900, letterSpacing: -0.5),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              ),
+              Text('365',
+                  style: TextStyle(
+                    fontFamily: AppTheme.displayFont,
+                    fontSize: 32,
+                    fontWeight: FontWeight.w700,
+                    color: scheme.onSurface,
+                  )),
               StreakFlame(streak: streak),
             ],
           ),
-          const SizedBox(height: 16),
-          Card(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: XpBar(xp: player?.xp ?? 0),
-            ),
+          const SizedBox(height: 4),
+          Text(
+            'Bonjour ${profile.name}.',
+            style: TextStyle(fontSize: 15, color: scheme.onSurfaceVariant),
           ),
+          const SizedBox(height: 16),
+          _DayHero(dayNumber: dayNumber, arc: arc),
+          const SizedBox(height: 14),
+          _JourneyTimeline(dayNumber: dayNumber, arc: arc),
           const SizedBox(height: 20),
           _QuestCard(
             isTrainingDay: isTrainingDay,
@@ -109,8 +115,14 @@ class _HomeTab extends ConsumerWidget {
             _BossBanner(group: group, status: status),
           ],
           const SizedBox(height: 24),
-          const Text('Tes pistes de progression',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+          const SectionLabel('Progression'),
+          const SizedBox(height: 6),
+          Card(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: XpBar(xp: player?.xp ?? 0),
+            ),
+          ),
           const SizedBox(height: 12),
           for (final group in program.groups) ...[
             _TrackCard(
@@ -122,11 +134,203 @@ class _HomeTab extends ConsumerWidget {
           const SizedBox(height: 8),
           Center(
             child: Text(
-              'Méthode DailyRepsGuy — circuits de 20 min max.',
-              style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
+              '20 minutes par jour. 365 jours. Ta meilleure version.',
+              style: TextStyle(
+                  fontSize: 12,
+                  fontStyle: FontStyle.italic,
+                  color: scheme.onSurfaceVariant),
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Le héros du voyage : « Jour N / 365 ».
+class _DayHero extends StatelessWidget {
+  const _DayHero({required this.dayNumber, required this.arc});
+
+  final int dayNumber;
+  final int arc;
+
+  @override
+  Widget build(BuildContext context) {
+    final remaining = (Journey.totalDays - dayNumber).clamp(0, Journey.totalDays);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(22, 20, 22, 18),
+      decoration: BoxDecoration(
+        color: AppTheme.nuit,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppTheme.or.withValues(alpha: 0.55), width: 1),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('JOUR',
+              style: TextStyle(
+                fontSize: 12,
+                letterSpacing: 3.5,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.ivoire.withValues(alpha: 0.7),
+              )),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text('$dayNumber',
+                  style: const TextStyle(
+                    fontFamily: AppTheme.displayFont,
+                    fontSize: 64,
+                    height: 1.1,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.ivoire,
+                  )),
+              const SizedBox(width: 8),
+              const Text('/ 365',
+                  style: TextStyle(
+                    fontFamily: AppTheme.displayFont,
+                    fontSize: 24,
+                    color: AppTheme.or,
+                    fontWeight: FontWeight.w600,
+                  )),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            dayNumber == 0
+                ? 'Le voyage commence aujourd\'hui.'
+                : 'Rendez-vous dans $remaining jours avec ta meilleure version.',
+            style: TextStyle(
+                fontSize: 13,
+                fontStyle: FontStyle.italic,
+                color: AppTheme.ivoire.withValues(alpha: 0.8)),
+          ),
+          const SizedBox(height: 12),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(2),
+            child: LinearProgressIndicator(
+              value: dayNumber / Journey.totalDays,
+              minHeight: 3,
+              backgroundColor: AppTheme.ivoire.withValues(alpha: 0.15),
+              color: AppTheme.or,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Timeline projetée des arcs du voyage, avec le marqueur « tu es ici ».
+class _JourneyTimeline extends StatelessWidget {
+  const _JourneyTimeline({required this.dayNumber, required this.arc});
+
+  final int dayNumber;
+  final int arc;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final segments = Journey.segments(arc);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    Journey.arcNames[arc]!,
+                    style: const TextStyle(
+                        fontFamily: AppTheme.displayFont,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w700),
+                  ),
+                ),
+                Text('acte ${arc - segments.first.arc + 1}/${segments.length}',
+                    style: TextStyle(
+                        fontSize: 12, color: scheme.onSurfaceVariant)),
+              ],
+            ),
+            const SizedBox(height: 2),
+            Text(Journey.arcMottos[arc]!,
+                style: TextStyle(
+                    fontSize: 12,
+                    fontStyle: FontStyle.italic,
+                    color: scheme.onSurfaceVariant)),
+            const SizedBox(height: 12),
+            LayoutBuilder(
+              builder: (context, constraints) {
+                final w = constraints.maxWidth;
+                final x = (dayNumber / Journey.totalDays * w)
+                    .clamp(0.0, w)
+                    .toDouble();
+                return SizedBox(
+                  height: 26,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      Positioned(
+                        top: 10,
+                        left: 0,
+                        right: 0,
+                        child: Row(
+                          children: [
+                            for (final s in segments) ...[
+                              Expanded(
+                                flex: s.endDay - s.startDay,
+                                child: Container(
+                                  height: 5,
+                                  decoration: BoxDecoration(
+                                    color: s.arc < arc
+                                        ? AppTheme.or
+                                        : s.arc == arc
+                                            ? AppTheme.or.withValues(alpha: 0.55)
+                                            : scheme.surfaceContainerHighest,
+                                    borderRadius: BorderRadius.circular(3),
+                                  ),
+                                ),
+                              ),
+                              if (s != segments.last) const SizedBox(width: 3),
+                            ],
+                          ],
+                        ),
+                      ),
+                      Positioned(
+                        left: x - 5,
+                        top: 3,
+                        child: Container(
+                          width: 10,
+                          height: 18,
+                          decoration: BoxDecoration(
+                            color: scheme.onSurface,
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(color: AppTheme.or, width: 1.4),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            const SizedBox(height: 6),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                for (final s in segments)
+                  Text(s.name.split(' ').first,
+                      style: TextStyle(
+                          fontSize: 10,
+                          letterSpacing: 0.5,
+                          color: scheme.onSurfaceVariant)),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -278,7 +482,8 @@ class _TrackCard extends StatelessWidget {
                         const SizedBox(width: 12),
                         PhasePill(
                           phase: progress.phase,
-                          label: group.phaseLabel(progress.phase),
+                          label:
+                              '${group.phaseLabel(progress.phase)} · Niv. ${progress.levelInPhase}',
                         ),
                       ],
                     ),

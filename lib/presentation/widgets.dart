@@ -93,7 +93,7 @@ class PhasePill extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
-        'Phase $phase · $label',
+        label,
         style: TextStyle(
           fontSize: 12,
           fontWeight: FontWeight.w700,
