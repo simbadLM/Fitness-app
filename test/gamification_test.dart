@@ -185,11 +185,25 @@ void main() {
       expect(Gamification.isMastered(target: 45, isDuration: true), isFalse);
     });
 
-    test('calibration : ~70 % du meilleur effort, avec plancher', () {
-      expect(Gamification.calibrationTarget(best: 20, isDuration: false), 14);
-      expect(Gamification.calibrationTarget(best: 4, isDuration: false), 5);
-      expect(Gamification.calibrationTarget(best: 60, isDuration: true), 42);
-      expect(Gamification.calibrationTarget(best: 10, isDuration: true), 15);
+    test('calibration : médiane des séries tenues, avec plancher', () {
+      // Premier tour plus fort, puis rythme de croisière : la médiane
+      // capture le rythme tenable, pas le max.
+      expect(
+          Gamification.calibrationTargetFromSets([14, 10, 9],
+              isDuration: false),
+          10);
+      expect(
+          Gamification.calibrationTargetFromSets([12, 10], isDuration: false),
+          11);
+      expect(Gamification.calibrationTargetFromSets([3, 3, 4], isDuration: false),
+          5); // plancher reps
+      expect(
+          Gamification.calibrationTargetFromSets([40, 30, 25],
+              isDuration: true),
+          30);
+      expect(Gamification.calibrationTargetFromSets([10], isDuration: true),
+          15); // plancher secondes
+      expect(Gamification.calibrationTargetFromSets([], isDuration: false), 5);
     });
 
     test('boss vaincu : toutes les séries tiennent l\'objectif relevé', () {

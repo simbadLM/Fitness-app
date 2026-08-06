@@ -97,11 +97,20 @@ abstract final class Gamification {
   static bool isMastered({required int target, required bool isDuration}) =>
       target >= (isDuration ? masterySeconds : masteryReps);
 
-  /// Objectif initial déduit de la calibration : ~70 % du meilleur effort,
-  /// pour être tenable sur tous les tours d'un AMRAP.
-  static int calibrationTarget({required int best, required bool isDuration}) {
+  /// Objectif initial déduit de la calibration : pendant la première pratique
+  /// d'un exercice, l'utilisateur fait ce qu'il tient sur chaque tour et
+  /// saisit ses répétitions réelles. L'objectif retenu est la **médiane** de
+  /// ces séries — le rythme effectivement tenable en circuit (pas un max).
+  static int calibrationTargetFromSets(List<int> reps,
+      {required bool isDuration}) {
     final floor = isDuration ? 15 : 5;
-    return max(floor, (best * 0.7).round());
+    if (reps.isEmpty) return floor;
+    final sorted = [...reps]..sort();
+    final n = sorted.length;
+    final median = n.isOdd
+        ? sorted[n ~/ 2]
+        : ((sorted[n ~/ 2 - 1] + sorted[n ~/ 2]) / 2).round();
+    return max(floor, median);
   }
 
   /// Un groupe réussit sa séance si chaque série de ses mouvements à objectif

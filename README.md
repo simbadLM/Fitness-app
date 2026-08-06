@@ -20,14 +20,16 @@ Cahier des charges : [`CAHIER_DES_CHARGES.md`](CAHIER_DES_CHARGES.md).
   (Bras/Pecs, Jambes, Abdos, Dos) + focus du jour, objectifs de répétitions
   fixes, **le score = le nombre de tours**.
 - **Placement & calibration** : quiz de niveau à l'onboarding, puis la
-  première pratique de chaque exercice calibre ton objectif (~70 % du max).
+  première pratique de chaque exercice calibre ton objectif (médiane des
+  séries que tu tiens réellement en circuit).
 - **Progression organique** : objectifs tenus 2 séances de suite → +2 reps
   (niveau suivant dans l'arc) ; au seuil de maîtrise → **boss fight** à
   objectifs relevés → arc suivant débloqué. Phases indépendantes par groupe.
 - **XP, niveaux, badges, streak** respectant les jours de repos planifiés.
 - **Matériel** : exercices filtrés selon ce que tu possèdes.
 - **Pictogrammes animés** vectoriels avec accessoires dessinés.
-- **Design « à la française »** : bleu nuit, ivoire, filets or, Playfair Display.
+- **Design sport / gaming** : fond bleu nuit, gradient turquoise → bleu
+  électrique, typo athlétique Rajdhani.
 - **100 % local** : profil et historique (SQLite/drift) sur l'appareil.
 
 ## Architecture
@@ -41,7 +43,7 @@ lib/
 content/
   program.json   catalogue exercices/phases (source de vérité du contenu)
 assets/icon/     logo 365 (généré, décliné via flutter_launcher_icons)
-fonts/           Playfair Display
+fonts/           Rajdhani
 ```
 
 ## Développement

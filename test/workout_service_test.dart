@@ -72,8 +72,8 @@ void main() {
 
     final result = await play(p, day1, reps: (m) => 10);
     expect(result.calibratedTargets.length, p.movements.length);
-    // 70 % de 10 = 7.
-    expect(result.calibratedTargets.values.every((t) => t == 7), isTrue);
+    // Objectif = médiane des séries tenues (10 partout).
+    expect(result.calibratedTargets.values.every((t) => t == 10), isTrue);
     expect(result.streak, 1);
     expect(result.newBadges, contains('first_session'));
 
@@ -84,7 +84,7 @@ void main() {
   test('2 séances réussies sous la maîtrise → objectifs +2, pas de boss',
       () async {
     final day1 = DateTime(2026, 8, 3);
-    await play(await plan(day1), day1, reps: (m) => 10); // calibration → 7
+    await play(await plan(day1), day1, reps: (m) => 10); // calibration → 10
 
     final day2 = DateTime(2026, 8, 4);
     await play(await plan(day2), day2, reps: (m) => m.effectiveTarget ?? 10);
@@ -92,7 +92,7 @@ void main() {
     final r3 = await play(await plan(day3), day3,
         reps: (m) => m.effectiveTarget ?? 10);
 
-    // 2 réussites consécutives, objectifs (7) < maîtrise (15) → +2, et aucun
+    // 2 réussites consécutives, objectifs (10) < maîtrise (15) → +2, et aucun
     // boss ne doit être prêt (la maîtrise n'est pas atteinte).
     expect(r3.targetUps, isNotEmpty);
     expect(r3.targetUps.values.every((t) => t.to == t.from + 2), isTrue);

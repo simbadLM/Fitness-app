@@ -238,16 +238,16 @@ class WorkoutService {
     final levelBefore = Gamification.levelInfo(player.xp).level;
     final levelAfter = Gamification.levelInfo(player.xp + xpTotal).level;
 
-    // --- Calibration : les mouvements sans objectif en reçoivent un ---
+    // --- Calibration : les mouvements sans objectif en reçoivent un
+    // (médiane des séries réellement tenues pendant cette séance) ---
     final calibratedTargets = <String, int>{};
     for (final movement in plan.movements.where((m) => m.isCalibration)) {
       final movementSets =
           sets.where((s) => s.exerciseId == movement.exercise.id).toList();
       if (movementSets.isEmpty) continue;
-      final best =
-          movementSets.map((s) => s.reps).reduce((a, b) => a > b ? a : b);
-      calibratedTargets[movement.exercise.id] = Gamification.calibrationTarget(
-        best: best,
+      calibratedTargets[movement.exercise.id] =
+          Gamification.calibrationTargetFromSets(
+        [for (final s in movementSets) s.reps],
         isDuration: movement.exercise.type == ExerciseType.duration,
       );
     }

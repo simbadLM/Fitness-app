@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app.dart';
 import '../../domain/content.dart';
 import '../../domain/models.dart';
+import '../theme.dart';
 
 const _weekdays = [
   (1, 'Lun'),
@@ -71,13 +72,18 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
           padding: const EdgeInsets.all(24),
           children: [
             const SizedBox(height: 24),
-            Text('365',
-                style: TextStyle(
-                  fontFamily: 'Playfair',
-                  fontSize: 56,
-                  fontWeight: FontWeight.w700,
-                  color: scheme.onSurface,
-                )),
+            ShaderMask(
+              shaderCallback: (bounds) =>
+                  AppTheme.accentGradient.createShader(bounds),
+              child: const Text('365',
+                  style: TextStyle(
+                    fontFamily: AppTheme.displayFont,
+                    fontSize: 64,
+                    height: 1,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  )),
+            ),
             const SizedBox(height: 8),
             Text(
               '20 minutes par jour, chez toi.\nDans 365 jours d\'entraînement, tu ne te reconnaîtras plus.',

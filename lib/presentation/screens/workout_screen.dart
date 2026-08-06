@@ -338,7 +338,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Text(
-                '🧭 Calibration — fais ton maximum propre, l\'app fixera ton objectif',
+                '🧭 Calibration — fais ce que tu tiens proprement sur chaque tour, saisis tes reps',
                 style: TextStyle(
                     color: scheme.onTertiaryContainer,
                     fontWeight: FontWeight.w700,
@@ -471,7 +471,7 @@ class _PreviewView extends StatelessWidget {
                   if (plan.movements.any((m) => m.isCalibration)) ...[
                     const SizedBox(height: 8),
                     Text(
-                      '🧭 Certains mouvements sont en calibration : fais ton maximum proprement, l\'app en déduira tes objectifs.',
+                      '🧭 Certains mouvements sont en calibration : fais ce que tu tiens proprement sur chaque tour et saisis tes reps — l\'app retiendra ton rythme comme objectif.',
                       style: TextStyle(
                           color: scheme.onSurfaceVariant, fontSize: 13),
                     ),

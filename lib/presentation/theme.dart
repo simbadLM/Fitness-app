@@ -1,63 +1,77 @@
 import 'package:flutter/material.dart';
 
-/// Direction artistique « à la française » : bleu nuit, ivoire, filets or,
-/// chiffres et titres en Playfair Display. Sobriété, espace, matière.
+/// Direction artistique sport / gaming : fond bleu nuit, gradient
+/// turquoise → bleu électrique, typo athlétique Rajdhani.
 abstract final class AppTheme {
-  static const nuit = Color(0xFF121830); // bleu nuit
-  static const encre = Color(0xFF1C2440); // encre marine
-  static const ivoire = Color(0xFFF7F2E7);
-  static const creme = Color(0xFFFDFBF5);
-  static const or = Color(0xFFC9A227); // accent doré
-  static const orSombre = Color(0xFFA8871F);
-  static const carmin = Color(0xFF9E2B25); // boss
-  static const brume = Color(0xFFE9E2D2); // surfaces claires
+  static const nuit = Color(0xFF0B1120); // fond sombre
+  static const surfaceSombre = Color(0xFF131C31);
+  static const turquoise = Color(0xFF22E7C7);
+  static const bleu = Color(0xFF3B82F6);
+  static const blanc = Color(0xFFEAF2F8);
+  static const carmin = Color(0xFFFF4D5E); // boss
+  static const flamme = Color(0xFFFF8A3D);
 
-  static const gold = or;
+  /// Alias historiques (props des pictogrammes, accents).
+  static const or = turquoise;
+  static const gold = turquoise;
   static const boss = carmin;
+  static const ivoire = blanc;
+
+  /// Le gradient signature de l'app.
+  static const accentGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [turquoise, bleu],
+  );
+
+  static const bossGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [Color(0xFFFF6B5E), Color(0xFFC62861)],
+  );
 
   /// Titres et grands chiffres.
-  static const displayFont = 'Playfair';
+  static const displayFont = 'Rajdhani';
 
   static ThemeData light() {
     final scheme = ColorScheme.fromSeed(
-      seedColor: encre,
+      seedColor: bleu,
       brightness: Brightness.light,
     ).copyWith(
-      primary: encre,
-      onPrimary: ivoire,
-      secondary: orSombre,
-      surface: creme,
-      onSurface: nuit,
-      surfaceContainerLow: const Color(0xFFF4EEE1),
-      surfaceContainerHighest: brume,
-      outlineVariant: const Color(0xFFD8CFBA),
-      primaryContainer: const Color(0xFFE4E0D2),
-      onPrimaryContainer: nuit,
-      tertiaryContainer: const Color(0xFFEFE6CE),
-      onTertiaryContainer: const Color(0xFF6B5510),
-      error: carmin,
+      primary: const Color(0xFF0E8DBF),
+      secondary: const Color(0xFF0AA88E),
+      surface: const Color(0xFFF4F8FC),
+      onSurface: const Color(0xFF10192E),
+      surfaceContainerLow: Colors.white,
+      surfaceContainerHighest: const Color(0xFFDDE7F0),
+      outlineVariant: const Color(0xFFC9D6E2),
+      primaryContainer: const Color(0xFFD3F5EE),
+      onPrimaryContainer: const Color(0xFF0A4A40),
+      tertiaryContainer: const Color(0xFFD9EEFB),
+      onTertiaryContainer: const Color(0xFF14425E),
+      error: const Color(0xFFD03A49),
     );
     return _base(scheme);
   }
 
   static ThemeData dark() {
     final scheme = ColorScheme.fromSeed(
-      seedColor: encre,
+      seedColor: bleu,
       brightness: Brightness.dark,
     ).copyWith(
-      primary: ivoire,
+      primary: turquoise,
       onPrimary: nuit,
-      secondary: or,
-      surface: const Color(0xFF0E1326),
-      onSurface: ivoire,
-      surfaceContainerLow: const Color(0xFF171E38),
-      surfaceContainerHighest: const Color(0xFF232B4A),
-      outlineVariant: const Color(0xFF313A5C),
-      primaryContainer: const Color(0xFF232B4A),
-      onPrimaryContainer: ivoire,
-      tertiaryContainer: const Color(0xFF2E2A16),
-      onTertiaryContainer: const Color(0xFFE3C86C),
-      error: const Color(0xFFD06A63),
+      secondary: bleu,
+      surface: nuit,
+      onSurface: blanc,
+      surfaceContainerLow: surfaceSombre,
+      surfaceContainerHighest: const Color(0xFF1E2A45),
+      outlineVariant: const Color(0xFF27324E),
+      primaryContainer: const Color(0xFF123B41),
+      onPrimaryContainer: turquoise,
+      tertiaryContainer: const Color(0xFF14304A),
+      onTertiaryContainer: const Color(0xFF7CD2F5),
+      error: carmin,
     );
     return _base(scheme);
   }
@@ -75,18 +89,15 @@ abstract final class AppTheme {
         elevation: 0,
         titleTextStyle: TextStyle(
           color: scheme.onSurface,
-          fontSize: 24,
+          fontSize: 26,
           fontFamily: displayFont,
           fontWeight: FontWeight.w700,
-          letterSpacing: 0.2,
+          letterSpacing: 0.5,
         ),
       ),
       textTheme: Typography.material2021(platform: TargetPlatform.android)
           .black
-          .apply(
-            bodyColor: scheme.onSurface,
-            displayColor: scheme.onSurface,
-          )
+          .apply(bodyColor: scheme.onSurface, displayColor: scheme.onSurface)
           .copyWith(
             displayLarge: TextStyle(
                 fontFamily: displayFont,
@@ -109,7 +120,7 @@ abstract final class AppTheme {
         elevation: 0,
         color: scheme.surfaceContainerLow,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(14),
+          borderRadius: BorderRadius.circular(18),
           side: BorderSide(color: scheme.outlineVariant, width: 0.8),
         ),
         margin: EdgeInsets.zero,
@@ -117,31 +128,34 @@ abstract final class AppTheme {
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
           minimumSize: const Size.fromHeight(56),
-          backgroundColor: isDark ? or : encre,
-          foregroundColor: isDark ? nuit : ivoire,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          backgroundColor: isDark ? turquoise : const Color(0xFF0E8DBF),
+          foregroundColor: isDark ? nuit : Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
           textStyle: const TextStyle(
-              fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.6),
+              fontFamily: displayFont,
+              fontSize: 19,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 1.0),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           foregroundColor: scheme.onSurface,
           side: BorderSide(color: scheme.outlineVariant),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
         ),
       ),
       chipTheme: ChipThemeData(
         shape: const StadiumBorder(),
         side: BorderSide(color: scheme.outlineVariant, width: 0.8),
-        backgroundColor: scheme.surface,
-        selectedColor: isDark ? const Color(0xFF3A3417) : const Color(0xFFEFE6CE),
+        backgroundColor: scheme.surfaceContainerLow,
+        selectedColor: isDark ? const Color(0xFF123B41) : const Color(0xFFD3F5EE),
         labelStyle: TextStyle(color: scheme.onSurface, fontSize: 13),
       ),
       dividerTheme: DividerThemeData(color: scheme.outlineVariant, thickness: 0.8),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: scheme.surface,
-        indicatorColor: isDark ? const Color(0xFF3A3417) : const Color(0xFFEFE6CE),
+        indicatorColor: isDark ? const Color(0xFF123B41) : const Color(0xFFD3F5EE),
         labelTextStyle: WidgetStatePropertyAll(TextStyle(
             fontSize: 12,
             letterSpacing: 0.4,
@@ -152,7 +166,7 @@ abstract final class AppTheme {
   }
 }
 
-/// Petit intitulé de section « à la française » : capitales espacées, filet or.
+/// Intitulé de section : capitales espacées + filet dégradé.
 class SectionLabel extends StatelessWidget {
   const SectionLabel(this.text, {super.key});
 
@@ -166,14 +180,26 @@ class SectionLabel extends StatelessWidget {
         Text(
           text.toUpperCase(),
           style: TextStyle(
-            fontSize: 12,
-            letterSpacing: 2.4,
+            fontFamily: AppTheme.displayFont,
+            fontSize: 14,
+            letterSpacing: 2.6,
             fontWeight: FontWeight.w700,
             color: scheme.onSurfaceVariant,
           ),
         ),
         const SizedBox(width: 12),
-        Expanded(child: Container(height: 0.8, color: AppTheme.or.withValues(alpha: 0.5))),
+        Expanded(
+          child: Container(
+            height: 2,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(colors: [
+                AppTheme.turquoise.withValues(alpha: 0.7),
+                AppTheme.bleu.withValues(alpha: 0.0),
+              ]),
+              borderRadius: BorderRadius.circular(1),
+            ),
+          ),
+        ),
       ],
     );
   }

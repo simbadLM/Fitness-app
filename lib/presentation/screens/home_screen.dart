@@ -85,13 +85,18 @@ class _HomeTab extends ConsumerWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text('365',
-                  style: TextStyle(
-                    fontFamily: AppTheme.displayFont,
-                    fontSize: 32,
-                    fontWeight: FontWeight.w700,
-                    color: scheme.onSurface,
-                  )),
+              ShaderMask(
+                shaderCallback: (bounds) =>
+                    AppTheme.accentGradient.createShader(bounds),
+                child: const Text('365',
+                    style: TextStyle(
+                      fontFamily: AppTheme.displayFont,
+                      fontSize: 36,
+                      height: 1,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    )),
+              ),
               StreakFlame(streak: streak),
             ],
           ),
@@ -160,38 +165,55 @@ class _DayHero extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.fromLTRB(22, 20, 22, 18),
       decoration: BoxDecoration(
-        color: AppTheme.nuit,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppTheme.or.withValues(alpha: 0.55), width: 1),
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [Color(0xFF0C1B36), Color(0xFF0A2E4E)],
+        ),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+            color: AppTheme.turquoise.withValues(alpha: 0.45), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: AppTheme.bleu.withValues(alpha: 0.25),
+            blurRadius: 24,
+            offset: const Offset(0, 8),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text('JOUR',
               style: TextStyle(
-                fontSize: 12,
-                letterSpacing: 3.5,
-                fontWeight: FontWeight.w700,
-                color: AppTheme.ivoire.withValues(alpha: 0.7),
+                fontFamily: AppTheme.displayFont,
+                fontSize: 14,
+                letterSpacing: 4,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.blanc.withValues(alpha: 0.7),
               )),
           Row(
             crossAxisAlignment: CrossAxisAlignment.baseline,
             textBaseline: TextBaseline.alphabetic,
             children: [
-              Text('$dayNumber',
-                  style: const TextStyle(
-                    fontFamily: AppTheme.displayFont,
-                    fontSize: 64,
-                    height: 1.1,
-                    fontWeight: FontWeight.w700,
-                    color: AppTheme.ivoire,
-                  )),
+              ShaderMask(
+                shaderCallback: (bounds) =>
+                    AppTheme.accentGradient.createShader(bounds),
+                child: Text('$dayNumber',
+                    style: const TextStyle(
+                      fontFamily: AppTheme.displayFont,
+                      fontSize: 72,
+                      height: 1.05,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.white,
+                    )),
+              ),
               const SizedBox(width: 8),
-              const Text('/ 365',
+              Text('/ 365',
                   style: TextStyle(
                     fontFamily: AppTheme.displayFont,
-                    fontSize: 24,
-                    color: AppTheme.or,
+                    fontSize: 26,
+                    color: AppTheme.blanc.withValues(alpha: 0.85),
                     fontWeight: FontWeight.w600,
                   )),
             ],
@@ -202,18 +224,25 @@ class _DayHero extends StatelessWidget {
                 ? 'Le voyage commence aujourd\'hui.'
                 : 'Rendez-vous dans $remaining jours avec ta meilleure version.',
             style: TextStyle(
-                fontSize: 13,
-                fontStyle: FontStyle.italic,
-                color: AppTheme.ivoire.withValues(alpha: 0.8)),
+                fontSize: 13, color: AppTheme.blanc.withValues(alpha: 0.8)),
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
           ClipRRect(
-            borderRadius: BorderRadius.circular(2),
-            child: LinearProgressIndicator(
-              value: dayNumber / Journey.totalDays,
-              minHeight: 3,
-              backgroundColor: AppTheme.ivoire.withValues(alpha: 0.15),
-              color: AppTheme.or,
+            borderRadius: BorderRadius.circular(3),
+            child: Stack(
+              children: [
+                Container(
+                    height: 6, color: AppTheme.blanc.withValues(alpha: 0.12)),
+                FractionallySizedBox(
+                  widthFactor:
+                      (dayNumber / Journey.totalDays).clamp(0.004, 1.0),
+                  child: Container(
+                    height: 6,
+                    decoration: const BoxDecoration(
+                        gradient: AppTheme.accentGradient),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
@@ -349,18 +378,27 @@ class _QuestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     final subtitle = trainedToday
         ? 'Séance du jour déjà terminée. Tu peux en refaire une !'
         : isTrainingDay
             ? 'Circuit de 20 minutes max. Autant de tours que possible !'
             : 'Jour de repos planifié — mais rien ne t\'arrête.';
-    return Material(
-      color: hasBoss ? AppTheme.boss : scheme.primary,
-      borderRadius: BorderRadius.circular(24),
+    return Container(
+      decoration: BoxDecoration(
+        gradient: hasBoss ? AppTheme.bossGradient : AppTheme.accentGradient,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: (hasBoss ? AppTheme.carmin : AppTheme.turquoise)
+                .withValues(alpha: 0.35),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
+          ),
+        ],
+      ),
       child: InkWell(
         onTap: () => context.push('/workout'),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Row(
@@ -376,11 +414,13 @@ class _QuestCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      hasBoss ? 'BOSS FIGHT !' : 'Quête du jour',
+                      hasBoss ? 'BOSS FIGHT !' : 'QUÊTE DU JOUR',
                       style: const TextStyle(
+                          fontFamily: AppTheme.displayFont,
                           color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.w900),
+                          fontSize: 23,
+                          letterSpacing: 1.2,
+                          fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 4),
                     Text(subtitle,

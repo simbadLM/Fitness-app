@@ -112,8 +112,11 @@ content/        program.json — catalogue exercices/phases extrait du programme
    séance = le nombre de tours**. Pendant l'effort, un seul bouton
    **« Fait ✓ »** valide l'objectif ; un bouton discret « ajuster » ouvre le
    compteur à dérouler / ± seulement en cas d'écart. Les exercices jamais
-   faits passent par une **calibration** (saisie du maximum propre →
-   objectif fixé à ~70 %, tenable en circuit).
+   faits passent par une **calibration** *(révision v3.1)* : pendant la
+   première pratique, l'utilisateur fait ce qu'il tient proprement sur
+   chaque tour et saisit ses répétitions ; l'objectif retenu est la
+   **médiane de ces séries** — le rythme réellement tenable en circuit
+   (jamais un « max reps » qui n'a pas de sens au milieu d'un AMRAP).
 2. **Évaluation du niveau de départ** *(révision v2.1)* : **quiz de
    placement** à l'onboarding (la checklist du programme, une question par
    groupe musculaire → phase 1/2/3) + **première séance de calibration**
@@ -135,7 +138,9 @@ content/        program.json — catalogue exercices/phases extrait du programme
    (Jour N / 365)** est le héros de l'accueil ; une **timeline projetée**
    des arcs (Apprentissage · Reprise → Consolidation → Athlétisation →
    Maîtrise) donne la dimension philosophique du voyage.
-7. **Direction artistique** *(révision v3)* : « à la française » — bleu
-   nuit, ivoire, filets or, titres et chiffres en Playfair Display ; logo
-   « 365 · JOURS » bleu nuit et or décliné en icônes Android/iOS.
+7. **Direction artistique** *(révision v3.1)* : **sport / gaming moderne** —
+   fond bleu nuit, **gradient signature turquoise → bleu électrique**,
+   halos lumineux, typo athlétique **Rajdhani** pour titres et chiffres ;
+   logo « 365 · JOURS » en dégradé turquoise/bleu décliné en icônes
+   Android/iOS. L'app doit donner envie de s'entraîner.
 8. **Plateformes** : Android + iOS (v2), builds produits par la CI.
