@@ -4,6 +4,7 @@ import 'package:drift/native.dart';
 import 'package:fitness_game/data/db.dart';
 import 'package:fitness_game/data/repositories.dart';
 import 'package:fitness_game/domain/content.dart';
+import 'package:fitness_game/domain/gamification.dart';
 import 'package:fitness_game/domain/models.dart';
 import 'package:fitness_game/domain/workout_generator.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -101,13 +102,21 @@ void main() {
         isTrue);
   });
 
-  test('maîtrise atteinte → boss prêt, victoire → phase débloquée', () async {
-    // Objectifs directement au seuil de maîtrise pour tous les exercices phase 1.
+  /// Cale tous les exercices de phase 1 à leur seuil de maîtrise (pondéré
+  /// par la difficulté de chaque exercice).
+  Future<void> setMasteryTargets() async {
     for (final g in program.groups) {
       for (final e in g.exercisesForPhase(1)) {
-        await repo.setTarget(e.id, e.type == ExerciseType.duration ? 60 : 15);
+        await repo.setTarget(
+            e.id,
+            Gamification.masteryThreshold(
+                tier: e.tier, isDuration: e.type == ExerciseType.duration));
       }
     }
+  }
+
+  test('maîtrise atteinte → boss prêt, victoire → phase débloquée', () async {
+    await setMasteryTargets();
 
     // 2 séances réussies → un groupe passe boss ready (pas de bump : maîtrisé).
     final day1 = DateTime(2026, 8, 3);
@@ -136,11 +145,7 @@ void main() {
   });
 
   test('boss perdu : la phase ne bouge pas et le boss se représente', () async {
-    for (final g in program.groups) {
-      for (final e in g.exercisesForPhase(1)) {
-        await repo.setTarget(e.id, e.type == ExerciseType.duration ? 60 : 15);
-      }
-    }
+    await setMasteryTargets();
     final day1 = DateTime(2026, 8, 3);
     await play(await plan(day1), day1, reps: (m) => m.effectiveTarget!);
     final day2 = DateTime(2026, 8, 4);

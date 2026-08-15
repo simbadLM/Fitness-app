@@ -92,6 +92,38 @@ class GameRepository {
   Stream<int> watchDayNumber() => db.select(db.sessions).watch().map((rows) =>
       rows.map((s) => DateTime(s.date.year, s.date.month, s.date.day)).toSet().length);
 
+  /// exerciseId → date de dernière pratique.
+  Future<Map<String, DateTime>> lastUsedByExercise() async {
+    final rows = await db.customSelect(
+      'SELECT sl.exercise_id AS eid, MAX(s.date) AS d '
+      'FROM set_logs sl JOIN sessions s ON s.id = sl.session_id '
+      'GROUP BY sl.exercise_id',
+      readsFrom: {db.setLogs, db.sessions},
+    ).get();
+    return {
+      for (final r in rows) r.read<String>('eid'): r.read<DateTime>('d'),
+    };
+  }
+
+  /// exerciseId → jours (à minuit) où il a été pratiqué depuis [cutoff].
+  Future<Map<String, Set<DateTime>>> usageDaysSince(DateTime cutoff) async {
+    final rows = await db.customSelect(
+      'SELECT DISTINCT sl.exercise_id AS eid, s.date AS d '
+      'FROM set_logs sl JOIN sessions s ON s.id = sl.session_id '
+      'WHERE s.date >= ?',
+      variables: [Variable.withDateTime(cutoff)],
+      readsFrom: {db.setLogs, db.sessions},
+    ).get();
+    final result = <String, Set<DateTime>>{};
+    for (final r in rows) {
+      final d = r.read<DateTime>('d');
+      result
+          .putIfAbsent(r.read<String>('eid'), () => {})
+          .add(DateTime(d.year, d.month, d.day));
+    }
+    return result;
+  }
+
   Future<void> ensureProgressRows(Iterable<String> groupIds) async {
     for (final id in groupIds) {
       await db.into(db.groupProgressRows).insert(
@@ -296,7 +328,8 @@ class WorkoutService {
             m.target == null ||
             Gamification.isMastered(
                 target: m.target!,
-                isDuration: m.exercise.type == ExerciseType.duration));
+                isDuration: m.exercise.type == ExerciseType.duration,
+                tier: m.exercise.tier));
         if (!allMastered) {
           for (final m in entry.value) {
             if (m.target == null) continue;

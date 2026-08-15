@@ -178,11 +178,20 @@ void main() {
           BossStatus.normal);
     });
 
-    test('seuil de maîtrise : 15 reps ou 60 s', () {
+    test('seuil de maîtrise pondéré par la difficulté (tier)', () {
+      // Tier 2 (défaut) : 15 reps / 50 s.
       expect(Gamification.isMastered(target: 15, isDuration: false), isTrue);
       expect(Gamification.isMastered(target: 14, isDuration: false), isFalse);
-      expect(Gamification.isMastered(target: 60, isDuration: true), isTrue);
+      expect(Gamification.isMastered(target: 50, isDuration: true), isTrue);
       expect(Gamification.isMastered(target: 45, isDuration: true), isFalse);
+      // Tier 1 (facile) exige plus, tier 3 (dur) exige moins.
+      expect(Gamification.isMastered(target: 15, isDuration: false, tier: 1),
+          isFalse);
+      expect(Gamification.isMastered(target: 18, isDuration: false, tier: 1),
+          isTrue);
+      expect(Gamification.isMastered(target: 10, isDuration: false, tier: 3),
+          isTrue);
+      expect(Gamification.masteryThreshold(tier: 3, isDuration: true), 40);
     });
 
     test('calibration : médiane des séries tenues, avec plancher', () {

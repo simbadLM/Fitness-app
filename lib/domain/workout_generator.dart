@@ -1,14 +1,16 @@
-import 'dart:math';
-
 import 'content.dart';
 import 'models.dart';
 
-/// Génère la "quête du jour" selon la méthode du guide :
-/// 1 exercice par groupe musculaire (dans sa phase courante) + 1–2 exercices
-/// sur le groupe focus du jour, filtrés selon le matériel possédé.
+/// Génère la « quête du jour » : 1 exercice par groupe musculaire (dans sa
+/// phase courante) + 1 exercice focus, filtrés selon le matériel possédé.
+///
+/// Le choix des exercices est **conscient de la couverture** : à pool égal,
+/// on privilégie d'abord l'exercice qui travaille les schémas moteurs les
+/// moins couverts sur les 7 derniers jours, puis le moins récemment pratiqué.
+/// Sur une semaine, le pool de chaque phase tourne entièrement et tous les
+/// schémas accessibles sont visités — sans hasard, de façon testable.
 abstract final class WorkoutGenerator {
-  /// Rotation du focus selon le guide (lun bras/pecs, mar jambes, jeu abdos,
-  /// ven dos ; mer/sam/dim : circuit sans focus).
+  /// Rotation du focus (lun bras/pecs, mar jambes, jeu abdos, ven dos).
   static const Map<int, String?> focusByWeekday = {
     DateTime.monday: 'armsChest',
     DateTime.tuesday: 'legs',
@@ -31,21 +33,28 @@ abstract final class WorkoutGenerator {
     required Set<Equipment> owned,
     required DateTime date,
 
-    /// exerciseId → objectif fixe par tour. Un exercice absent de cette map
-    /// est en calibration (l'utilisateur saisira ses répétitions réelles).
+    /// exerciseId → objectif fixe par tour (absent = calibration).
     Map<String, int> targets = const {},
+
+    /// exerciseId → date de dernière pratique.
+    Map<String, DateTime> lastUsed = const {},
+
+    /// Schéma moteur → nombre de jours où il a été travaillé (7 derniers jours).
+    Map<MovementPattern, int> recentPatternCounts = const {},
   }) {
-    final seed = date.year * 10000 + date.month * 100 + date.day;
     final focusGroupId = focusByWeekday[date.weekday];
     final movements = <Movement>[];
     String? bossGroupId;
 
-    for (final (index, group) in program.groups.indexed) {
+    for (final group in program.groups) {
       final groupProgress = progress[group.id] ?? GroupProgress(groupId: group.id);
       final phase = groupProgress.phase;
       final pool = _availablePool(group, phase, owned);
-      final random = Random(seed + index);
-      // Un boss exige un exercice déjà calibré : l'objectif à relever vient de là.
+      final weighted = phase >= 4 && owned.any(weightEquipment.contains);
+
+      // Boss : exercice de référence = le plus difficile (tier max) parmi les
+      // exercices déjà calibrés du pool — pas question de valider une phase
+      // sur son exercice le plus facile.
       final calibratedPool = [
         for (final e in pool)
           if (targets.containsKey(e.id)) e,
@@ -53,10 +62,21 @@ abstract final class WorkoutGenerator {
       final wantsBoss = bossGroupId == null &&
           groupProgress.bossStatus == BossStatus.ready &&
           calibratedPool.isNotEmpty;
-      final effectivePool = wantsBoss ? calibratedPool : pool;
-      final exercise = effectivePool[random.nextInt(effectivePool.length)];
-      final weighted = phase >= 4 && owned.any(weightEquipment.contains);
-      if (wantsBoss) bossGroupId = group.id;
+
+      final Exercise exercise;
+      if (wantsBoss) {
+        calibratedPool.sort((a, b) {
+          final byTier = b.tier.compareTo(a.tier);
+          return byTier != 0 ? byTier : a.id.compareTo(b.id);
+        });
+        exercise = calibratedPool.first;
+        bossGroupId = group.id;
+      } else {
+        exercise = _pickForCoverage(pool,
+            date: date,
+            lastUsed: lastUsed,
+            recentPatternCounts: recentPatternCounts);
+      }
 
       movements.add(Movement(
         group: group,
@@ -70,7 +90,10 @@ abstract final class WorkoutGenerator {
       if (group.id == focusGroupId) {
         final others = pool.where((e) => e.id != exercise.id).toList();
         if (others.isNotEmpty) {
-          final extra = others[random.nextInt(others.length)];
+          final extra = _pickForCoverage(others,
+              date: date,
+              lastUsed: lastUsed,
+              recentPatternCounts: recentPatternCounts);
           movements.add(Movement(
             group: group,
             exercise: extra,
@@ -91,6 +114,38 @@ abstract final class WorkoutGenerator {
     );
   }
 
+  /// Meilleur candidat pour la couverture. Ordre lexicographique déterministe :
+  /// 1. nombre de schémas moteurs **pas encore couverts** cette semaine
+  ///    (l'exercice qui débloque le plus de cases gagne),
+  /// 2. ancienneté de dernière pratique (jamais pratiqué = prioritaire) —
+  ///    une fois tout couvert, c'est une rotation LRU pure du pool,
+  /// 3. identifiant (stabilité du choix pour une même journée).
+  static Exercise _pickForCoverage(
+    List<Exercise> pool, {
+    required DateTime date,
+    required Map<String, DateTime> lastUsed,
+    required Map<MovementPattern, int> recentPatternCounts,
+  }) {
+    int uncovered(Exercise e) => e.patterns
+        .where((p) => (recentPatternCounts[p] ?? 0) == 0)
+        .length;
+
+    int staleness(Exercise e) {
+      final last = lastUsed[e.id];
+      if (last == null) return 100000;
+      return date.difference(last).inDays.clamp(0, 3650);
+    }
+
+    final sorted = [...pool]..sort((a, b) {
+        final byUncovered = uncovered(b).compareTo(uncovered(a));
+        if (byUncovered != 0) return byUncovered;
+        final byStaleness = staleness(b).compareTo(staleness(a));
+        if (byStaleness != 0) return byStaleness;
+        return a.id.compareTo(b.id);
+      });
+    return sorted.first;
+  }
+
   /// Alternatives du même groupe/phase pour remplacer un mouvement proposé.
   static List<Exercise> alternatives({
     required Movement movement,
@@ -100,9 +155,8 @@ abstract final class WorkoutGenerator {
           .where((e) => e.id != movement.exercise.id)
           .toList();
 
-  /// Exercices de la phase filtrés par matériel ; si le filtre vide le pool
-  /// (profil sans aucun matériel sur une phase très équipée), on retombe sur
-  /// la liste complète plutôt que de bloquer la séance.
+  /// Exercices de la phase filtrés par matériel ; si le filtre vide le pool,
+  /// on retombe sur la liste complète plutôt que de bloquer la séance.
   static List<Exercise> _availablePool(
       MuscleGroup group, int phase, Set<Equipment> owned) {
     final all = group.exercisesForPhase(phase);

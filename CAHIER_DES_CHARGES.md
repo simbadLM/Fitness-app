@@ -144,3 +144,18 @@ content/        program.json — catalogue exercices/phases extrait du programme
    logo « 365 · JOURS » en dégradé turquoise/bleu décliné en icônes
    Android/iOS. L'app doit donner envie de s'entraîner.
 8. **Plateformes** : Android + iOS (v2), builds produits par la CI.
+9. **Schémas moteurs & couverture** *(révision v3.2)* : chaque exercice est
+   tagué par schémas moteurs (poussée H/V, tirage H/V, squat, hinge,
+   unilatéral, gainage flexion/anti-extension/rotation, explosivité, port de
+   charge, mollets) et par **difficulté relative (tier 1–3)** au sein de sa
+   phase. Le générateur choisit les exercices pour **couvrir tous les schémas
+   accessibles sur 7 jours glissants** (priorité aux schémas non couverts,
+   puis rotation du moins récent) ; jauge de couverture visible dans Stats.
+   Les seuils de maîtrise sont pondérés par le tier (18/15/10 reps —
+   60/50/40 s) et le **boss se valide sur l'exercice le plus difficile**
+   calibré du pool, jamais le plus facile.
+10. **Pédagogie intégrée** *(révision v3.2)* : écran optionnel « Comprendre
+    la méthode » (accueil, réglages, écran de séance) expliquant chaque
+    mécanisme — AMRAP, calibration, +2/maîtrise/boss, schémas moteurs,
+    streak/repos — et les fondamentaux hors app (échauffement guidé de
+    2 min intégré, cardio doux 1-2×/sem, sommeil, protéines, mobilité).

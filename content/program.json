@@ -1,6 +1,6 @@
 {
   "$schema_note": "Catalogue d'entraînement de l'app 365 — source de vérité du contenu. Champs par exercice : 'equipment' (liste de matériels alternatifs — l'exercice est disponible si l'utilisateur possède AU MOINS UN des éléments ; liste vide = aucun matériel requis), 'picto' (famille de pictogramme animé), 'type' ('reps' par défaut, ou 'duration' pour les exercices chronométrés). Les noms d'exercices restent en anglais (nomenclature fitness usuelle) ; la traduction FR se fera via i18n.",
-  "version": 3,
+  "version": 4,
   "method": {
     "sessionDurationMinutes": 20,
     "format": "AMRAP",
@@ -56,7 +56,11 @@
               "name": "Kneeling Push-Ups",
               "note": "reduce load, build form",
               "equipment": [],
-              "picto": "pushup"
+              "picto": "pushup",
+              "patterns": [
+                "pushH"
+              ],
+              "tier": 1
             },
             {
               "id": "chair-dips",
@@ -65,7 +69,11 @@
               "equipment": [
                 "chair"
               ],
-              "picto": "dip"
+              "picto": "dip",
+              "patterns": [
+                "pushV"
+              ],
+              "tier": 2
             },
             {
               "id": "backpack-bicep-curls",
@@ -74,14 +82,22 @@
               "equipment": [
                 "backpack"
               ],
-              "picto": "curl"
+              "picto": "curl",
+              "patterns": [
+                "pullH"
+              ],
+              "tier": 1
             },
             {
               "id": "incline-pushups",
               "name": "Incline Push-Ups",
               "note": "hands on counter or couch",
               "equipment": [],
-              "picto": "pushup"
+              "picto": "pushup",
+              "patterns": [
+                "pushH"
+              ],
+              "tier": 1
             }
           ]
         },
@@ -93,14 +109,22 @@
               "id": "standard-pushups",
               "name": "Standard Push-Ups",
               "equipment": [],
-              "picto": "pushup"
+              "picto": "pushup",
+              "patterns": [
+                "pushH"
+              ],
+              "tier": 1
             },
             {
               "id": "close-grip-pushups",
               "name": "Close-Grip Push-Ups",
               "note": "triceps emphasis",
               "equipment": [],
-              "picto": "pushup"
+              "picto": "pushup",
+              "patterns": [
+                "pushH"
+              ],
+              "tier": 2
             },
             {
               "id": "kb-floor-press",
@@ -109,7 +133,11 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "press"
+              "picto": "press",
+              "patterns": [
+                "pushH"
+              ],
+              "tier": 1
             },
             {
               "id": "decline-pushups",
@@ -118,7 +146,11 @@
               "equipment": [
                 "chair"
               ],
-              "picto": "pushup"
+              "picto": "pushup",
+              "patterns": [
+                "pushH"
+              ],
+              "tier": 2
             },
             {
               "id": "feet-elevated-dips",
@@ -127,19 +159,31 @@
               "equipment": [
                 "chair"
               ],
-              "picto": "dip"
+              "picto": "dip",
+              "patterns": [
+                "pushV"
+              ],
+              "tier": 2
             },
             {
               "id": "diamond-pushups",
               "name": "Diamond Push-Ups",
               "equipment": [],
-              "picto": "pushup"
+              "picto": "pushup",
+              "patterns": [
+                "pushH"
+              ],
+              "tier": 3
             },
             {
               "id": "pike-pushups-ac",
               "name": "Pike Push-Ups",
               "equipment": [],
-              "picto": "handstand"
+              "picto": "handstand",
+              "patterns": [
+                "pushV"
+              ],
+              "tier": 2
             },
             {
               "id": "kb-shoulder-press",
@@ -147,7 +191,11 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "press"
+              "picto": "press",
+              "patterns": [
+                "pushV"
+              ],
+              "tier": 1
             },
             {
               "id": "chin-ups-ac",
@@ -155,7 +203,11 @@
               "equipment": [
                 "pullupBar"
               ],
-              "picto": "pullup"
+              "picto": "pullup",
+              "patterns": [
+                "pullV"
+              ],
+              "tier": 3
             }
           ]
         },
@@ -167,13 +219,23 @@
               "id": "explosive-pushups",
               "name": "Explosive Push-Ups / Clap Push-Ups",
               "equipment": [],
-              "picto": "pushup"
+              "picto": "pushup",
+              "patterns": [
+                "pushH",
+                "plyo"
+              ],
+              "tier": 2
             },
             {
               "id": "archer-pushups",
               "name": "Archer Push-Ups",
               "equipment": [],
-              "picto": "pushup"
+              "picto": "pushup",
+              "patterns": [
+                "pushH",
+                "unilateral"
+              ],
+              "tier": 3
             },
             {
               "id": "kb-pushup-rows",
@@ -182,7 +244,13 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "row"
+              "picto": "row",
+              "patterns": [
+                "pushH",
+                "pullH",
+                "coreAntiExt"
+              ],
+              "tier": 2
             },
             {
               "id": "bw-dips",
@@ -191,13 +259,21 @@
               "equipment": [
                 "dipBars"
               ],
-              "picto": "dip"
+              "picto": "dip",
+              "patterns": [
+                "pushV"
+              ],
+              "tier": 2
             },
             {
               "id": "deficit-pushups",
               "name": "Deficit Push-Ups",
               "equipment": [],
-              "picto": "pushup"
+              "picto": "pushup",
+              "patterns": [
+                "pushH"
+              ],
+              "tier": 2
             },
             {
               "id": "kb-clean-to-press",
@@ -205,20 +281,33 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "press"
+              "picto": "press",
+              "patterns": [
+                "pushV",
+                "hinge"
+              ],
+              "tier": 2
             },
             {
               "id": "handstand-pushups-ac",
               "name": "Handstand Push-Ups",
               "equipment": [],
-              "picto": "handstand"
+              "picto": "handstand",
+              "patterns": [
+                "pushV"
+              ],
+              "tier": 3
             },
             {
               "id": "tension-pushups",
               "name": "Tension Push-Ups",
               "note": "hold at the bottom 5–30s OR slow down 4–8s and quick up",
               "equipment": [],
-              "picto": "pushup"
+              "picto": "pushup",
+              "patterns": [
+                "pushH"
+              ],
+              "tier": 1
             }
           ]
         },
@@ -242,35 +331,56 @@
               "id": "bw-squats",
               "name": "Bodyweight Squats",
               "equipment": [],
-              "picto": "squat"
+              "picto": "squat",
+              "patterns": [
+                "squat"
+              ],
+              "tier": 1
             },
             {
               "id": "reverse-lunges",
               "name": "Reverse Lunges",
               "note": "bodyweight",
               "equipment": [],
-              "picto": "lunge"
+              "picto": "lunge",
+              "patterns": [
+                "squat",
+                "unilateral"
+              ],
+              "tier": 2
             },
             {
               "id": "glute-bridges",
               "name": "Glute Bridges",
               "note": "bodyweight",
               "equipment": [],
-              "picto": "bridge"
+              "picto": "bridge",
+              "patterns": [
+                "hinge"
+              ],
+              "tier": 1
             },
             {
               "id": "step-ups",
               "name": "Step-Ups",
               "note": "small step/chair",
               "equipment": [],
-              "picto": "stepup"
+              "picto": "stepup",
+              "patterns": [
+                "unilateral"
+              ],
+              "tier": 2
             },
             {
               "id": "calf-raises",
               "name": "Calf Raises",
               "note": "bodyweight",
               "equipment": [],
-              "picto": "calfraise"
+              "picto": "calfraise",
+              "patterns": [
+                "calf"
+              ],
+              "tier": 1
             }
           ]
         },
@@ -285,20 +395,33 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "squat"
+              "picto": "squat",
+              "patterns": [
+                "squat"
+              ],
+              "tier": 1
             },
             {
               "id": "walking-lunges",
               "name": "Walking Lunges",
               "note": "weight optional",
               "equipment": [],
-              "picto": "lunge"
+              "picto": "lunge",
+              "patterns": [
+                "unilateral"
+              ],
+              "tier": 2
             },
             {
               "id": "single-leg-glute-bridge",
               "name": "Single-Leg Glute Bridge",
               "equipment": [],
-              "picto": "bridge"
+              "picto": "bridge",
+              "patterns": [
+                "hinge",
+                "unilateral"
+              ],
+              "tier": 2
             },
             {
               "id": "bulgarian-split-squats",
@@ -307,19 +430,33 @@
               "equipment": [
                 "chair"
               ],
-              "picto": "lunge"
+              "picto": "lunge",
+              "patterns": [
+                "unilateral"
+              ],
+              "tier": 3
             },
             {
               "id": "jump-squats-p2",
               "name": "Jump Squats",
               "equipment": [],
-              "picto": "jumpsquat"
+              "picto": "jumpsquat",
+              "patterns": [
+                "squat",
+                "plyo"
+              ],
+              "tier": 2
             },
             {
               "id": "jump-lunges",
               "name": "Jump Lunges",
               "equipment": [],
-              "picto": "lunge"
+              "picto": "lunge",
+              "patterns": [
+                "unilateral",
+                "plyo"
+              ],
+              "tier": 3
             },
             {
               "id": "kb-swings-legs",
@@ -327,7 +464,11 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "swing"
+              "picto": "swing",
+              "patterns": [
+                "hinge"
+              ],
+              "tier": 2
             }
           ]
         },
@@ -340,7 +481,12 @@
               "name": "Pistol Squat Progressions",
               "note": "box pistol, assisted, full",
               "equipment": [],
-              "picto": "squat"
+              "picto": "squat",
+              "patterns": [
+                "squat",
+                "unilateral"
+              ],
+              "tier": 3
             },
             {
               "id": "kb-swing-p3",
@@ -348,13 +494,22 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "swing"
+              "picto": "swing",
+              "patterns": [
+                "hinge"
+              ],
+              "tier": 1
             },
             {
               "id": "jump-squats-p3",
               "name": "Jump Squats",
               "equipment": [],
-              "picto": "jumpsquat"
+              "picto": "jumpsquat",
+              "patterns": [
+                "squat",
+                "plyo"
+              ],
+              "tier": 2
             },
             {
               "id": "weighted-step-ups",
@@ -364,7 +519,11 @@
                 "kettlebell",
                 "backpack"
               ],
-              "picto": "stepup"
+              "picto": "stepup",
+              "patterns": [
+                "unilateral"
+              ],
+              "tier": 2
             },
             {
               "id": "romanian-deadlifts",
@@ -374,7 +533,11 @@
                 "kettlebell",
                 "backpack"
               ],
-              "picto": "hinge"
+              "picto": "hinge",
+              "patterns": [
+                "hinge"
+              ],
+              "tier": 2
             },
             {
               "id": "static-lunges-kb-pass",
@@ -382,7 +545,12 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "lunge"
+              "picto": "lunge",
+              "patterns": [
+                "unilateral",
+                "coreRot"
+              ],
+              "tier": 2
             },
             {
               "id": "weighted-glute-bridges",
@@ -392,7 +560,11 @@
                 "kettlebell",
                 "backpack"
               ],
-              "picto": "bridge"
+              "picto": "bridge",
+              "patterns": [
+                "hinge"
+              ],
+              "tier": 1
             },
             {
               "id": "kb-overhead-squats",
@@ -400,7 +572,12 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "squat"
+              "picto": "squat",
+              "patterns": [
+                "squat",
+                "pushV"
+              ],
+              "tier": 3
             },
             {
               "id": "weighted-bulgarian-split-squats",
@@ -410,7 +587,11 @@
                 "kettlebell",
                 "backpack"
               ],
-              "picto": "lunge"
+              "picto": "lunge",
+              "patterns": [
+                "unilateral"
+              ],
+              "tier": 3
             }
           ]
         },
@@ -434,20 +615,32 @@
               "id": "dead-bugs",
               "name": "Dead Bugs",
               "equipment": [],
-              "picto": "deadbug"
+              "picto": "deadbug",
+              "patterns": [
+                "coreAntiExt"
+              ],
+              "tier": 1
             },
             {
               "id": "crunches",
               "name": "Crunches",
               "equipment": [],
-              "picto": "crunch"
+              "picto": "crunch",
+              "patterns": [
+                "coreFlex"
+              ],
+              "tier": 1
             },
             {
               "id": "leg-raises-floor",
               "name": "Leg Raises",
               "note": "on floor",
               "equipment": [],
-              "picto": "legraise"
+              "picto": "legraise",
+              "patterns": [
+                "coreFlex"
+              ],
+              "tier": 2
             },
             {
               "id": "plank-p1",
@@ -455,13 +648,21 @@
               "note": "20–30 sec",
               "equipment": [],
               "picto": "plank",
-              "type": "duration"
+              "type": "duration",
+              "patterns": [
+                "coreAntiExt"
+              ],
+              "tier": 2
             },
             {
               "id": "penguins",
               "name": "Penguins",
               "equipment": [],
-              "picto": "crunch"
+              "picto": "crunch",
+              "patterns": [
+                "coreRot"
+              ],
+              "tier": 1
             }
           ]
         },
@@ -473,7 +674,11 @@
               "id": "v-ups",
               "name": "V-Ups",
               "equipment": [],
-              "picto": "vup"
+              "picto": "vup",
+              "patterns": [
+                "coreFlex"
+              ],
+              "tier": 2
             },
             {
               "id": "hanging-knee-raises",
@@ -482,7 +687,11 @@
               "equipment": [
                 "pullupBar"
               ],
-              "picto": "hangraise"
+              "picto": "hangraise",
+              "patterns": [
+                "coreFlex"
+              ],
+              "tier": 2
             },
             {
               "id": "side-planks",
@@ -490,14 +699,23 @@
               "note": "30–40 sec",
               "equipment": [],
               "picto": "plank",
-              "type": "duration"
+              "type": "duration",
+              "patterns": [
+                "coreRot",
+                "coreAntiExt"
+              ],
+              "tier": 2
             },
             {
               "id": "russian-twists",
               "name": "Russian Twists",
               "note": "KB optional",
               "equipment": [],
-              "picto": "twist"
+              "picto": "twist",
+              "patterns": [
+                "coreRot"
+              ],
+              "tier": 1
             },
             {
               "id": "kb-marches",
@@ -505,19 +723,34 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "march"
+              "picto": "march",
+              "patterns": [
+                "coreAntiExt",
+                "carry"
+              ],
+              "tier": 1
             },
             {
               "id": "plank-shoulder-taps",
               "name": "Plank Shoulder Taps",
               "equipment": [],
-              "picto": "plank"
+              "picto": "plank",
+              "patterns": [
+                "coreAntiExt",
+                "coreRot"
+              ],
+              "tier": 2
             },
             {
               "id": "mountain-climbers",
               "name": "Mountain Climbers",
               "equipment": [],
-              "picto": "climber"
+              "picto": "climber",
+              "patterns": [
+                "coreAntiExt",
+                "plyo"
+              ],
+              "tier": 1
             },
             {
               "id": "kb-swings-abs",
@@ -525,7 +758,11 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "swing"
+              "picto": "swing",
+              "patterns": [
+                "hinge"
+              ],
+              "tier": 2
             }
           ]
         },
@@ -540,7 +777,11 @@
               "equipment": [
                 "pullupBar"
               ],
-              "picto": "hangraise"
+              "picto": "hangraise",
+              "patterns": [
+                "coreFlex"
+              ],
+              "tier": 3
             },
             {
               "id": "toe-to-bar-progressions",
@@ -549,13 +790,21 @@
               "equipment": [
                 "pullupBar"
               ],
-              "picto": "hangraise"
+              "picto": "hangraise",
+              "patterns": [
+                "coreFlex"
+              ],
+              "tier": 3
             },
             {
               "id": "plank-walkouts",
               "name": "Plank Walk-Outs",
               "equipment": [],
-              "picto": "plank"
+              "picto": "plank",
+              "patterns": [
+                "coreAntiExt"
+              ],
+              "tier": 2
             },
             {
               "id": "kb-situp-to-press",
@@ -563,7 +812,12 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "situp"
+              "picto": "situp",
+              "patterns": [
+                "coreFlex",
+                "pushV"
+              ],
+              "tier": 2
             },
             {
               "id": "kb-overhead-marches",
@@ -571,7 +825,12 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "march"
+              "picto": "march",
+              "patterns": [
+                "coreAntiExt",
+                "carry"
+              ],
+              "tier": 2
             },
             {
               "id": "plank-p3",
@@ -579,7 +838,11 @@
               "note": "more than a minute, optional hip movement",
               "equipment": [],
               "picto": "plank",
-              "type": "duration"
+              "type": "duration",
+              "patterns": [
+                "coreAntiExt"
+              ],
+              "tier": 1
             }
           ]
         },
@@ -603,7 +866,11 @@
               "id": "supermans",
               "name": "Supermans",
               "equipment": [],
-              "picto": "superman"
+              "picto": "superman",
+              "patterns": [
+                "hinge"
+              ],
+              "tier": 1
             },
             {
               "id": "backpack-bent-over-rows",
@@ -611,20 +878,32 @@
               "equipment": [
                 "backpack"
               ],
-              "picto": "row"
+              "picto": "row",
+              "patterns": [
+                "pullH"
+              ],
+              "tier": 1
             },
             {
               "id": "reverse-snow-angels",
               "name": "Reverse Snow Angels",
               "equipment": [],
-              "picto": "superman"
+              "picto": "superman",
+              "patterns": [
+                "pullH"
+              ],
+              "tier": 1
             },
             {
               "id": "doorway-isometric-pulls",
               "name": "Doorway Isometric Pulls",
               "note": "lean back + pull",
               "equipment": [],
-              "picto": "row"
+              "picto": "row",
+              "patterns": [
+                "pullH"
+              ],
+              "tier": 1
             },
             {
               "id": "assisted-pullups",
@@ -633,7 +912,11 @@
               "equipment": [
                 "pullupBar"
               ],
-              "picto": "pullup"
+              "picto": "pullup",
+              "patterns": [
+                "pullV"
+              ],
+              "tier": 2
             }
           ]
         },
@@ -648,27 +931,43 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "row"
+              "picto": "row",
+              "patterns": [
+                "pullH"
+              ],
+              "tier": 1
             },
             {
               "id": "hip-hinge-good-mornings",
               "name": "Hip Hinge / Good Mornings",
               "note": "backpack or bodyweight",
               "equipment": [],
-              "picto": "hinge"
+              "picto": "hinge",
+              "patterns": [
+                "hinge"
+              ],
+              "tier": 1
             },
             {
               "id": "back-extensions",
               "name": "Back Extensions",
               "note": "bench or couch edge",
               "equipment": [],
-              "picto": "superman"
+              "picto": "superman",
+              "patterns": [
+                "hinge"
+              ],
+              "tier": 1
             },
             {
               "id": "pike-pushups-back",
               "name": "Pike Push-Ups",
               "equipment": [],
-              "picto": "handstand"
+              "picto": "handstand",
+              "patterns": [
+                "pushV"
+              ],
+              "tier": 2
             },
             {
               "id": "pull-ups",
@@ -676,7 +975,11 @@
               "equipment": [
                 "pullupBar"
               ],
-              "picto": "pullup"
+              "picto": "pullup",
+              "patterns": [
+                "pullV"
+              ],
+              "tier": 3
             },
             {
               "id": "chin-ups-back",
@@ -684,14 +987,22 @@
               "equipment": [
                 "pullupBar"
               ],
-              "picto": "pullup"
+              "picto": "pullup",
+              "patterns": [
+                "pullV"
+              ],
+              "tier": 3
             },
             {
               "id": "inverted-doorway-rows",
               "name": "Inverted Doorway Rows",
               "note": "towel around sturdy handle OR with dip bar/rings",
               "equipment": [],
-              "picto": "row"
+              "picto": "row",
+              "patterns": [
+                "pullH"
+              ],
+              "tier": 2
             }
           ]
         },
@@ -705,7 +1016,12 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "row"
+              "picto": "row",
+              "patterns": [
+                "pullH",
+                "coreAntiExt"
+              ],
+              "tier": 2
             },
             {
               "id": "kb-gorilla-rows",
@@ -713,7 +1029,11 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "row"
+              "picto": "row",
+              "patterns": [
+                "pullH"
+              ],
+              "tier": 2
             },
             {
               "id": "explosive-hip-hinges",
@@ -722,7 +1042,12 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "hinge"
+              "picto": "hinge",
+              "patterns": [
+                "hinge",
+                "plyo"
+              ],
+              "tier": 2
             },
             {
               "id": "weighted-supermans",
@@ -731,7 +1056,11 @@
               "equipment": [
                 "backpack"
               ],
-              "picto": "superman"
+              "picto": "superman",
+              "patterns": [
+                "hinge"
+              ],
+              "tier": 1
             },
             {
               "id": "kb-clean-and-press",
@@ -739,7 +1068,12 @@
               "equipment": [
                 "kettlebell"
               ],
-              "picto": "press"
+              "picto": "press",
+              "patterns": [
+                "pushV",
+                "hinge"
+              ],
+              "tier": 2
             },
             {
               "id": "weighted-pullups",
@@ -747,13 +1081,21 @@
               "equipment": [
                 "pullupBar"
               ],
-              "picto": "pullup"
+              "picto": "pullup",
+              "patterns": [
+                "pullV"
+              ],
+              "tier": 3
             },
             {
               "id": "handstand-pushups-back",
               "name": "Handstand Push-Ups",
               "equipment": [],
-              "picto": "handstand"
+              "picto": "handstand",
+              "patterns": [
+                "pushV"
+              ],
+              "tier": 3
             },
             {
               "id": "inverted-rows",
@@ -762,7 +1104,11 @@
               "equipment": [
                 "chair"
               ],
-              "picto": "row"
+              "picto": "row",
+              "patterns": [
+                "pullH"
+              ],
+              "tier": 2
             }
           ]
         },

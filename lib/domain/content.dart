@@ -45,6 +45,29 @@ enum PictoType {
 
 enum ExerciseType { reps, duration }
 
+/// Schéma moteur travaillé par un exercice. C'est la granularité de la
+/// couverture d'entraînement : sur une semaine, tous les schémas accessibles
+/// devraient être visités.
+enum MovementPattern {
+  pushH('Poussée horizontale', 'pompes, développés couché'),
+  pushV('Poussée verticale', 'épaules, dips, handstand'),
+  pullH('Tirage horizontal', 'rowings, dos épais'),
+  pullV('Tirage vertical', 'tractions, grands dorsaux'),
+  squat('Squat', 'flexion de genoux, quadriceps'),
+  hinge('Hinge', 'charnière de hanche, ischios & fessiers'),
+  unilateral('Unilatéral', 'une jambe : équilibre & symétrie'),
+  coreFlex('Gainage : flexion', 'abdos en raccourcissement'),
+  coreAntiExt('Gainage : anti-extension', 'planches, stabilité du tronc'),
+  coreRot('Gainage : rotation', 'obliques, anti-rotation'),
+  plyo('Explosivité', 'sauts, pliométrie'),
+  carry('Port de charge', 'marches lestées, grip'),
+  calf('Mollets', 'extensions de cheville');
+
+  const MovementPattern(this.labelFr, this.hint);
+  final String labelFr;
+  final String hint;
+}
+
 class Exercise {
   const Exercise({
     required this.id,
@@ -53,6 +76,8 @@ class Exercise {
     this.note,
     this.equipment = const [],
     this.type = ExerciseType.reps,
+    this.patterns = const [],
+    this.tier = 2,
   });
 
   final String id;
@@ -61,6 +86,14 @@ class Exercise {
   final List<Equipment> equipment;
   final PictoType picto;
   final ExerciseType type;
+
+  /// Schémas moteurs travaillés.
+  final List<MovementPattern> patterns;
+
+  /// Difficulté relative au sein de sa phase : 1 facile → 3 difficile.
+  /// Module le seuil de maîtrise et le choix de l'exercice de référence
+  /// pour le boss fight.
+  final int tier;
 
   bool availableWith(Set<Equipment> owned) =>
       equipment.isEmpty || equipment.any(owned.contains);
@@ -75,6 +108,11 @@ class Exercise {
         ],
         picto: PictoType.values.byName(json['picto'] as String),
         type: json['type'] == 'duration' ? ExerciseType.duration : ExerciseType.reps,
+        patterns: [
+          for (final p in (json['patterns'] as List? ?? const []))
+            MovementPattern.values.byName(p as String),
+        ],
+        tier: (json['tier'] as int?) ?? 2,
       );
 }
 

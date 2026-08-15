@@ -85,17 +85,24 @@ abstract final class Gamification {
   static const int targetIncrementReps = 2;
   static const int targetIncrementSeconds = 10;
 
-  /// Seuil de maîtrise d'un objectif : au-delà, on ne relève plus l'objectif,
-  /// on déclenche le boss fight vers la phase supérieure (« move to the next
-  /// phase when movements are too easy »).
-  static const int masteryReps = 15;
-  static const int masterySeconds = 60;
+  /// Seuils de maîtrise pondérés par la difficulté de l'exercice (tier 1
+  /// facile → 3 difficile) : maîtriser 10 pompes diamant vaut 18 pompes à
+  /// genoux. Au-delà du seuil, on ne relève plus l'objectif, on déclenche le
+  /// boss fight vers la phase supérieure.
+  static const List<int> masteryRepsByTier = [18, 15, 10];
+  static const List<int> masterySecondsByTier = [60, 50, 40];
 
   static int targetIncrement(bool isDuration) =>
       isDuration ? targetIncrementSeconds : targetIncrementReps;
 
-  static bool isMastered({required int target, required bool isDuration}) =>
-      target >= (isDuration ? masterySeconds : masteryReps);
+  static int masteryThreshold({required int tier, required bool isDuration}) {
+    final index = (tier - 1).clamp(0, 2);
+    return isDuration ? masterySecondsByTier[index] : masteryRepsByTier[index];
+  }
+
+  static bool isMastered(
+          {required int target, required bool isDuration, int tier = 2}) =>
+      target >= masteryThreshold(tier: tier, isDuration: isDuration);
 
   /// Objectif initial déduit de la calibration : pendant la première pratique
   /// d'un exercice, l'utilisateur fait ce qu'il tient sur chaque tour et

@@ -97,7 +97,17 @@ class _HomeTab extends ConsumerWidget {
                       color: Colors.white,
                     )),
               ),
-              StreakFlame(streak: streak),
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () => context.push('/method'),
+                    tooltip: 'Comprendre la méthode',
+                    icon: Icon(Icons.school_rounded,
+                        color: scheme.onSurfaceVariant),
+                  ),
+                  StreakFlame(streak: streak),
+                ],
+              ),
             ],
           ),
           const SizedBox(height: 4),

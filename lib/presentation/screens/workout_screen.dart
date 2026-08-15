@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../app.dart';
 import '../../domain/content.dart';
+import '../../domain/coverage.dart';
 import '../../domain/models.dart';
 import '../../domain/workout_generator.dart';
 import '../pictograms.dart';
@@ -53,14 +54,20 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
     final profile = ref.read(profileProvider)!;
     final repo = ref.read(gameRepoProvider);
     await repo.ensureProgressRows(program.groups.map((g) => g.id));
+    final now = DateTime.now();
     final progress = await repo.getProgress();
     final targets = await repo.getTargets();
+    final lastUsed = await repo.lastUsedByExercise();
+    final usageDays =
+        await repo.usageDaysSince(now.subtract(const Duration(days: 7)));
     final plan = WorkoutGenerator.generate(
       program: program,
       progress: progress,
       owned: profile.equipment,
-      date: DateTime.now(),
+      date: now,
       targets: targets,
+      lastUsed: lastUsed,
+      recentPatternCounts: Coverage.patternDayCounts(usageDays, program),
     );
     if (!mounted) return;
     setState(() {
@@ -511,12 +518,142 @@ class _PreviewView extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: const EdgeInsets.all(20),
-              child: FilledButton.icon(
-                onPressed: onStart,
-                icon: const Icon(Icons.play_arrow_rounded),
-                label: const Text('C\'est parti !'),
+              padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: OutlinedButton.icon(
+                          onPressed: () => _showWarmup(context),
+                          icon: const Icon(Icons.whatshot_rounded, size: 20),
+                          label: const Text('Échauffement 2 min'),
+                        ),
+                      ),
+                      TextButton(
+                        onPressed: () => context.push('/method'),
+                        child: const Text('Pourquoi ?'),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  FilledButton.icon(
+                    onPressed: onStart,
+                    icon: const Icon(Icons.play_arrow_rounded),
+                    label: const Text('C\'est parti !'),
+                  ),
+                ],
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showWarmup(BuildContext context) {
+    showModalBottomSheet<void>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => const _WarmupSheet(),
+    );
+  }
+}
+
+/// Échauffement guidé de 2 minutes : 4 mouvements de 30 s.
+class _WarmupSheet extends StatefulWidget {
+  const _WarmupSheet();
+
+  @override
+  State<_WarmupSheet> createState() => _WarmupSheetState();
+}
+
+class _WarmupSheetState extends State<_WarmupSheet> {
+  static const _steps = [
+    'Cercles de bras + rotations d\'épaules',
+    'Montées de genoux sur place',
+    'Squats lents à vide, amplitude complète',
+    'Charnières de hanche lentes + rotations du buste',
+  ];
+
+  Timer? _timer;
+  int _remaining = 120;
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    _timer ??= Timer.periodic(const Duration(seconds: 1), (_) {
+      if (!mounted) return;
+      setState(() => _remaining--);
+      if (_remaining <= 0) {
+        _timer?.cancel();
+        Navigator.of(context).pop();
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    final index = ((120 - _remaining) ~/ 30).clamp(0, _steps.length - 1);
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(24, 0, 24, 24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Échauffement',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w800)),
+            const SizedBox(height: 4),
+            Text('30 secondes par mouvement, en douceur.',
+                style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant)),
+            const SizedBox(height: 12),
+            Text(
+              '${(_remaining ~/ 60)}:${(_remaining % 60).toString().padLeft(2, '0')}',
+              style: const TextStyle(
+                  fontFamily: AppTheme.displayFont,
+                  fontSize: 48,
+                  fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 8),
+            for (final (i, step) in _steps.indexed)
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  children: [
+                    Icon(
+                      _timer != null && i < index
+                          ? Icons.check_circle_rounded
+                          : _timer != null && i == index
+                              ? Icons.play_circle_fill_rounded
+                              : Icons.circle_outlined,
+                      size: 20,
+                      color: _timer != null && i <= index
+                          ? AppTheme.turquoise
+                          : scheme.outlineVariant,
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(step,
+                          style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: _timer != null && i == index
+                                  ? FontWeight.w700
+                                  : FontWeight.w500)),
+                    ),
+                  ],
+                ),
+              ),
+            const SizedBox(height: 12),
+            FilledButton(
+              onPressed: _timer == null
+                  ? _startTimer
+                  : () => Navigator.of(context).pop(),
+              child: Text(_timer == null ? 'Lancer' : 'Terminer'),
             ),
           ],
         ),

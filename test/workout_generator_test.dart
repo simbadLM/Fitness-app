@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:fitness_game/domain/content.dart';
+import 'package:fitness_game/domain/coverage.dart';
 import 'package:fitness_game/domain/models.dart';
 import 'package:fitness_game/domain/workout_generator.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -162,6 +163,51 @@ void main() {
       // Objectif du boss = objectif courant + 2.
       expect(boss.target, 15);
       expect(boss.effectiveTarget, 17);
+      // L'exercice de référence du boss est le plus difficile du pool calibré.
+      final maxTier = program
+          .group('legs')
+          .exercisesForPhase(1)
+          .map((e) => e.tier)
+          .reduce((a, b) => a > b ? a : b);
+      expect(boss.exercise.tier, maxTier);
+    });
+
+    test('couverture : sur une semaine, le pool tourne et les schémas passent',
+        () {
+      final progress = progressAt(1);
+      final lastUsed = <String, DateTime>{};
+      final usageDays = <String, Set<DateTime>>{};
+      final chosenLegs = <String>{};
+
+      for (var day = 0; day < 6; day++) {
+        final date = DateTime(2026, 8, 3 + day); // lun → sam
+        final plan = WorkoutGenerator.generate(
+          program: program,
+          progress: progress,
+          owned: const {},
+          date: date,
+          lastUsed: lastUsed,
+          recentPatternCounts:
+              Coverage.patternDayCounts(usageDays, program),
+        );
+        for (final m in plan.movements) {
+          if (m.group.id == 'legs') chosenLegs.add(m.exercise.id);
+          lastUsed[m.exercise.id] = date;
+          usageDays.putIfAbsent(m.exercise.id, () => {}).add(date);
+        }
+      }
+
+      // Le pool jambes phase 1 (5 exercices sans matériel) tourne presque
+      // entièrement sur 6 séances.
+      expect(chosenLegs.length, greaterThanOrEqualTo(4));
+
+      // Tous les schémas accessibles sans matériel en phase 1 sont couverts.
+      final accessible = Coverage.accessiblePatterns(
+          program: program, progress: progress, owned: const {});
+      final covered =
+          Coverage.patternDayCounts(usageDays, program).keys.toSet();
+      expect(accessible.difference(covered), isEmpty,
+          reason: 'schémas non couverts : ${accessible.difference(covered)}');
     });
 
     test('pas de boss sans exercice calibré dans le groupe', () {

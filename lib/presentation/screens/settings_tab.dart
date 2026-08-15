@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../app.dart';
 import '../../domain/content.dart';
@@ -79,6 +80,17 @@ class SettingsTab extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16),
+          const Divider(),
+          const _SectionTitle('Pédagogie'),
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.school_rounded),
+            title: const Text('Comprendre la méthode'),
+            subtitle: const Text(
+                'Pourquoi 20 min, les objectifs, les boss, les schémas moteurs…'),
+            trailing: const Icon(Icons.chevron_right_rounded),
+            onTap: () => context.push('/method'),
+          ),
           const Divider(),
           const _SectionTitle('Données'),
           ListTile(

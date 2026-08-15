@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../app.dart';
 import '../../data/db.dart';
+import '../../domain/content.dart';
+import '../../domain/coverage.dart';
 import '../../domain/gamification.dart';
 import '../theme.dart';
 
@@ -49,6 +51,8 @@ class StatsTab extends ConsumerWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 24),
+              const _CoverageSection(),
               const SizedBox(height: 24),
               const Text('Répétitions par groupe',
                   style: TextStyle(fontSize: 17, fontWeight: FontWeight.w800)),
@@ -167,6 +171,98 @@ class StatsTab extends ConsumerWidget {
           );
         },
       ),
+    );
+  }
+}
+
+/// Jauge de couverture des schémas moteurs sur les 7 derniers jours.
+class _CoverageSection extends ConsumerWidget {
+  const _CoverageSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final repo = ref.watch(gameRepoProvider);
+    final program = ref.watch(programProvider);
+    final profile = ref.watch(profileProvider)!;
+    final progress = ref.watch(progressProvider).value ?? {};
+    final scheme = Theme.of(context).colorScheme;
+
+    return FutureBuilder<Map<String, Set<DateTime>>>(
+      future: repo
+          .usageDaysSince(DateTime.now().subtract(const Duration(days: 7))),
+      builder: (context, snapshot) {
+        final usage = snapshot.data ?? const <String, Set<DateTime>>{};
+        final covered =
+            Coverage.patternDayCounts(usage, program).keys.toSet();
+        final accessible = Coverage.accessiblePatterns(
+          program: program,
+          progress: progress,
+          owned: profile.equipment,
+        );
+        final orderedAccessible = [
+          for (final p in MovementPattern.values)
+            if (accessible.contains(p)) p,
+        ];
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Expanded(
+                  child: Text('Schémas moteurs — 7 derniers jours',
+                      style: TextStyle(
+                          fontSize: 17, fontWeight: FontWeight.w800)),
+                ),
+                Text(
+                  '${orderedAccessible.where(covered.contains).length}/${orderedAccessible.length}',
+                  style: const TextStyle(
+                    fontFamily: AppTheme.displayFont,
+                    fontSize: 20,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.turquoise,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 4),
+            Text(
+              'La quête du jour choisit tes exercices pour tout couvrir sur une semaine.',
+              style: TextStyle(fontSize: 12, color: scheme.onSurfaceVariant),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                for (final p in orderedAccessible)
+                  Tooltip(
+                    message: p.hint,
+                    child: Chip(
+                      avatar: Icon(
+                        covered.contains(p)
+                            ? Icons.check_circle_rounded
+                            : Icons.radio_button_unchecked_rounded,
+                        size: 18,
+                        color: covered.contains(p)
+                            ? AppTheme.turquoise
+                            : scheme.outlineVariant,
+                      ),
+                      label: Text(
+                        p.labelFr,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: covered.contains(p)
+                              ? null
+                              : scheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -8,6 +8,7 @@ import 'data/repositories.dart';
 import 'domain/content.dart';
 import 'domain/models.dart';
 import 'presentation/screens/home_screen.dart';
+import 'presentation/screens/method_screen.dart';
 import 'presentation/screens/onboarding_screen.dart';
 import 'presentation/screens/summary_screen.dart';
 import 'presentation/screens/track_screen.dart';
@@ -57,6 +58,7 @@ final _router = GoRouter(
           TrackScreen(groupId: state.pathParameters['groupId']!),
     ),
     GoRoute(path: '/workout', builder: (context, state) => const WorkoutScreen()),
+    GoRoute(path: '/method', builder: (context, state) => const MethodScreen()),
     GoRoute(
       path: '/summary',
       builder: (context, state) =>
