@@ -151,7 +151,7 @@ class SummaryScreen extends ConsumerWidget {
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 2),
                                 child: Text(
-                                  '${program.findExercise(e.key)?.name ?? e.key} : '
+                                  '${program.findExercise(e.key)?.label ?? e.key} : '
                                   '${e.value.from} → ${e.value.to}',
                                   style: const TextStyle(fontSize: 14),
                                 ),
@@ -177,7 +177,7 @@ class SummaryScreen extends ConsumerWidget {
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 2),
                                 child: Text(
-                                  '${program.findExercise(e.key)?.name ?? e.key} : '
+                                  '${program.findExercise(e.key)?.label ?? e.key} : '
                                   'objectif fixé à ${e.value} par tour',
                                   style: const TextStyle(fontSize: 14),
                                 ),

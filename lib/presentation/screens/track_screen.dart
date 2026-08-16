@@ -164,10 +164,10 @@ class _ExerciseTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(exercise.name,
+                Text(exercise.label,
                     style: const TextStyle(fontWeight: FontWeight.w600)),
-                if (exercise.note != null)
-                  Text(exercise.note!,
+                if (exercise.hint != null)
+                  Text(exercise.hint!,
                       style: TextStyle(
                           fontSize: 12, color: scheme.onSurfaceVariant)),
               ],

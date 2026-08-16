@@ -1,6 +1,6 @@
 {
-  "$schema_note": "Catalogue d'entraînement de l'app 365 — source de vérité du contenu. Champs par exercice : 'equipment' (liste de matériels alternatifs — l'exercice est disponible si l'utilisateur possède AU MOINS UN des éléments ; liste vide = aucun matériel requis), 'picto' (famille de pictogramme animé), 'type' ('reps' par défaut, ou 'duration' pour les exercices chronométrés). Les noms d'exercices restent en anglais (nomenclature fitness usuelle) ; la traduction FR se fera via i18n.",
-  "version": 4,
+  "$schema_note": "Catalogue d'entraînement de l'app 365 — source de vérité du contenu. Champs par exercice : 'equipment' (liste de matériels alternatifs — l'exercice est disponible si l'utilisateur possède AU MOINS UN des éléments ; liste vide = aucun matériel requis), 'picto' (famille de pictogramme animé), 'type' ('reps' par défaut, ou 'duration' pour les exercices chronométrés). Chaque exercice porte 'name' (nomenclature anglaise usuelle, affichée en sous-titre) et 'nameFr'/'noteFr' (affichage principal).",
+  "version": 5,
   "method": {
     "sessionDurationMinutes": 20,
     "format": "AMRAP",
@@ -60,7 +60,9 @@
               "patterns": [
                 "pushH"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Pompes sur les genoux",
+              "noteFr": "charge réduite, construis ta technique"
             },
             {
               "id": "chair-dips",
@@ -73,7 +75,9 @@
               "patterns": [
                 "pushV"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Dips sur chaise",
+              "noteFr": "chaise stable ; pieds proches = plus facile"
             },
             {
               "id": "backpack-bicep-curls",
@@ -86,7 +90,9 @@
               "patterns": [
                 "pullH"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Curls biceps (sac à dos)",
+              "noteFr": "rempli de livres"
             },
             {
               "id": "incline-pushups",
@@ -97,7 +103,9 @@
               "patterns": [
                 "pushH"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Pompes inclinées",
+              "noteFr": "mains sur un plan de travail ou un canapé"
             }
           ]
         },
@@ -113,7 +121,8 @@
               "patterns": [
                 "pushH"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Pompes"
             },
             {
               "id": "close-grip-pushups",
@@ -124,7 +133,9 @@
               "patterns": [
                 "pushH"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Pompes prise serrée",
+              "noteFr": "accent triceps"
             },
             {
               "id": "kb-floor-press",
@@ -137,7 +148,9 @@
               "patterns": [
                 "pushH"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Développé au sol (kettlebell)",
+              "noteFr": "à une ou deux mains"
             },
             {
               "id": "decline-pushups",
@@ -150,7 +163,9 @@
               "patterns": [
                 "pushH"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Pompes déclinées",
+              "noteFr": "pieds sur une chaise"
             },
             {
               "id": "feet-elevated-dips",
@@ -163,7 +178,9 @@
               "patterns": [
                 "pushV"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Dips pieds surélevés",
+              "noteFr": "une chaise derrière + les pieds sur une autre"
             },
             {
               "id": "diamond-pushups",
@@ -173,7 +190,8 @@
               "patterns": [
                 "pushH"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Pompes diamant"
             },
             {
               "id": "pike-pushups-ac",
@@ -183,7 +201,8 @@
               "patterns": [
                 "pushV"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Pompes piquées (pike)"
             },
             {
               "id": "kb-shoulder-press",
@@ -195,7 +214,8 @@
               "patterns": [
                 "pushV"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Développé épaules (kettlebell)"
             },
             {
               "id": "chin-ups-ac",
@@ -207,7 +227,8 @@
               "patterns": [
                 "pullV"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Tractions supination (chin-ups)"
             }
           ]
         },
@@ -224,7 +245,8 @@
                 "pushH",
                 "plyo"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Pompes explosives / claquées"
             },
             {
               "id": "archer-pushups",
@@ -235,7 +257,8 @@
                 "pushH",
                 "unilateral"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Pompes archer"
             },
             {
               "id": "kb-pushup-rows",
@@ -250,7 +273,9 @@
                 "pullH",
                 "coreAntiExt"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Pompes + rowing kettlebell",
+              "noteFr": "pompe → tirage → alterne"
             },
             {
               "id": "bw-dips",
@@ -263,7 +288,9 @@
               "patterns": [
                 "pushV"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Dips",
+              "noteFr": "aux barres parallèles"
             },
             {
               "id": "deficit-pushups",
@@ -273,7 +300,8 @@
               "patterns": [
                 "pushH"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Pompes en déficit"
             },
             {
               "id": "kb-clean-to-press",
@@ -286,7 +314,8 @@
                 "pushV",
                 "hinge"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Clean & press kettlebell"
             },
             {
               "id": "handstand-pushups-ac",
@@ -296,7 +325,8 @@
               "patterns": [
                 "pushV"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Pompes en équilibre (handstand)"
             },
             {
               "id": "tension-pushups",
@@ -307,7 +337,9 @@
               "patterns": [
                 "pushH"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Pompes sous tension",
+              "noteFr": "tiens 5–30 s en bas OU descends en 4–8 s et remonte vite"
             }
           ]
         },
@@ -335,7 +367,8 @@
               "patterns": [
                 "squat"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Squats au poids du corps"
             },
             {
               "id": "reverse-lunges",
@@ -347,7 +380,9 @@
                 "squat",
                 "unilateral"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Fentes arrière",
+              "noteFr": "au poids du corps"
             },
             {
               "id": "glute-bridges",
@@ -358,7 +393,9 @@
               "patterns": [
                 "hinge"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Pont fessier",
+              "noteFr": "au poids du corps"
             },
             {
               "id": "step-ups",
@@ -369,7 +406,9 @@
               "patterns": [
                 "unilateral"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Montées sur marche",
+              "noteFr": "petite marche ou chaise"
             },
             {
               "id": "calf-raises",
@@ -380,7 +419,9 @@
               "patterns": [
                 "calf"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Extensions mollets",
+              "noteFr": "au poids du corps"
             }
           ]
         },
@@ -399,7 +440,9 @@
               "patterns": [
                 "squat"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Goblet squat",
+              "noteFr": "kettlebell"
             },
             {
               "id": "walking-lunges",
@@ -410,7 +453,9 @@
               "patterns": [
                 "unilateral"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Fentes marchées",
+              "noteFr": "lest optionnel"
             },
             {
               "id": "single-leg-glute-bridge",
@@ -421,7 +466,8 @@
                 "hinge",
                 "unilateral"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Pont fessier une jambe"
             },
             {
               "id": "bulgarian-split-squats",
@@ -434,7 +480,9 @@
               "patterns": [
                 "unilateral"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Fentes bulgares",
+              "noteFr": "pied arrière sur une chaise"
             },
             {
               "id": "jump-squats-p2",
@@ -445,7 +493,8 @@
                 "squat",
                 "plyo"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Squats sautés"
             },
             {
               "id": "jump-lunges",
@@ -456,7 +505,8 @@
                 "unilateral",
                 "plyo"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Fentes sautées"
             },
             {
               "id": "kb-swings-legs",
@@ -468,7 +518,8 @@
               "patterns": [
                 "hinge"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Kettlebell swings"
             }
           ]
         },
@@ -486,7 +537,9 @@
                 "squat",
                 "unilateral"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Progressions pistol squat",
+              "noteFr": "sur box, assisté, puis complet"
             },
             {
               "id": "kb-swing-p3",
@@ -498,7 +551,8 @@
               "patterns": [
                 "hinge"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Kettlebell swing"
             },
             {
               "id": "jump-squats-p3",
@@ -509,7 +563,8 @@
                 "squat",
                 "plyo"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Squats sautés"
             },
             {
               "id": "weighted-step-ups",
@@ -523,7 +578,9 @@
               "patterns": [
                 "unilateral"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Montées sur marche lestées",
+              "noteFr": "kettlebell ou sac à dos"
             },
             {
               "id": "romanian-deadlifts",
@@ -537,7 +594,9 @@
               "patterns": [
                 "hinge"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Soulevé de terre roumain (RDL)",
+              "noteFr": "avec kettlebell ou lest"
             },
             {
               "id": "static-lunges-kb-pass",
@@ -550,7 +609,9 @@
                 "unilateral",
                 "coreRot"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Fentes statiques + passage de kettlebell",
+              "noteFr": "passe la kettlebell sous la jambe avant"
             },
             {
               "id": "weighted-glute-bridges",
@@ -564,7 +625,9 @@
               "patterns": [
                 "hinge"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Pont fessier lesté",
+              "noteFr": "kettlebell ou lest"
             },
             {
               "id": "kb-overhead-squats",
@@ -577,7 +640,8 @@
                 "squat",
                 "pushV"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Squats overhead (kettlebell)"
             },
             {
               "id": "weighted-bulgarian-split-squats",
@@ -591,7 +655,9 @@
               "patterns": [
                 "unilateral"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Fentes bulgares lestées",
+              "noteFr": "kettlebell ou lest"
             }
           ]
         },
@@ -619,7 +685,8 @@
               "patterns": [
                 "coreAntiExt"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Dead bugs"
             },
             {
               "id": "crunches",
@@ -629,7 +696,8 @@
               "patterns": [
                 "coreFlex"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Crunchs"
             },
             {
               "id": "leg-raises-floor",
@@ -640,7 +708,8 @@
               "patterns": [
                 "coreFlex"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Relevés de jambes au sol"
             },
             {
               "id": "plank-p1",
@@ -652,7 +721,9 @@
               "patterns": [
                 "coreAntiExt"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Gainage planche",
+              "noteFr": "20–30 s"
             },
             {
               "id": "penguins",
@@ -662,7 +733,8 @@
               "patterns": [
                 "coreRot"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Touches de talons (penguins)"
             }
           ]
         },
@@ -678,7 +750,8 @@
               "patterns": [
                 "coreFlex"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "V-ups"
             },
             {
               "id": "hanging-knee-raises",
@@ -691,7 +764,9 @@
               "patterns": [
                 "coreFlex"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Relevés de genoux suspendu",
+              "noteFr": "barre de traction ; sinon tuck-ups au sol"
             },
             {
               "id": "side-planks",
@@ -704,7 +779,9 @@
                 "coreRot",
                 "coreAntiExt"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Gainage latéral",
+              "noteFr": "30–40 s"
             },
             {
               "id": "russian-twists",
@@ -715,7 +792,9 @@
               "patterns": [
                 "coreRot"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Russian twists",
+              "noteFr": "kettlebell optionnelle"
             },
             {
               "id": "kb-marches",
@@ -728,7 +807,8 @@
                 "coreAntiExt",
                 "carry"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Marches kettlebell"
             },
             {
               "id": "plank-shoulder-taps",
@@ -739,7 +819,8 @@
                 "coreAntiExt",
                 "coreRot"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Planche + touches d’épaules"
             },
             {
               "id": "mountain-climbers",
@@ -750,7 +831,8 @@
                 "coreAntiExt",
                 "plyo"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Mountain climbers"
             },
             {
               "id": "kb-swings-abs",
@@ -762,7 +844,8 @@
               "patterns": [
                 "hinge"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Kettlebell swings"
             }
           ]
         },
@@ -781,7 +864,9 @@
               "patterns": [
                 "coreFlex"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Relevés de jambes suspendu",
+              "noteFr": "jambes tendues"
             },
             {
               "id": "toe-to-bar-progressions",
@@ -794,7 +879,9 @@
               "patterns": [
                 "coreFlex"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Progressions toes-to-bar",
+              "noteFr": "genoux → L → pointes à la barre"
             },
             {
               "id": "plank-walkouts",
@@ -804,7 +891,8 @@
               "patterns": [
                 "coreAntiExt"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Marches en planche (walkouts)"
             },
             {
               "id": "kb-situp-to-press",
@@ -817,7 +905,8 @@
                 "coreFlex",
                 "pushV"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Sit-up + développé kettlebell"
             },
             {
               "id": "kb-overhead-marches",
@@ -830,7 +919,8 @@
                 "coreAntiExt",
                 "carry"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Marches kettlebell bras tendu"
             },
             {
               "id": "plank-p3",
@@ -842,7 +932,9 @@
               "patterns": [
                 "coreAntiExt"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Gainage planche +",
+              "noteFr": "plus d’une minute, mouvements de hanches optionnels"
             }
           ]
         },
@@ -870,7 +962,8 @@
               "patterns": [
                 "hinge"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Supermans"
             },
             {
               "id": "backpack-bent-over-rows",
@@ -882,7 +975,8 @@
               "patterns": [
                 "pullH"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Rowing buste penché (sac à dos)"
             },
             {
               "id": "reverse-snow-angels",
@@ -892,7 +986,9 @@
               "patterns": [
                 "pullH"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Anges inversés",
+              "noteFr": "allongé sur le ventre, grands arcs de bras"
             },
             {
               "id": "doorway-isometric-pulls",
@@ -903,7 +999,9 @@
               "patterns": [
                 "pullH"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Tirage isométrique (encadrement de porte)",
+              "noteFr": "penche-toi en arrière et tire"
             },
             {
               "id": "assisted-pullups",
@@ -916,7 +1014,9 @@
               "patterns": [
                 "pullV"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Tractions assistées",
+              "noteFr": "avec élastiques"
             }
           ]
         },
@@ -935,7 +1035,8 @@
               "patterns": [
                 "pullH"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Rowing un bras (kettlebell)"
             },
             {
               "id": "hip-hinge-good-mornings",
@@ -946,7 +1047,9 @@
               "patterns": [
                 "hinge"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Good mornings",
+              "noteFr": "sac à dos ou poids du corps"
             },
             {
               "id": "back-extensions",
@@ -957,7 +1060,9 @@
               "patterns": [
                 "hinge"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Extensions lombaires",
+              "noteFr": "banc ou bord de canapé"
             },
             {
               "id": "pike-pushups-back",
@@ -967,7 +1072,8 @@
               "patterns": [
                 "pushV"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Pompes piquées (pike)"
             },
             {
               "id": "pull-ups",
@@ -979,7 +1085,8 @@
               "patterns": [
                 "pullV"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Tractions pronation (pull-ups)"
             },
             {
               "id": "chin-ups-back",
@@ -991,7 +1098,8 @@
               "patterns": [
                 "pullV"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Tractions supination (chin-ups)"
             },
             {
               "id": "inverted-doorway-rows",
@@ -1002,7 +1110,9 @@
               "patterns": [
                 "pullH"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Rowing inversé (porte)",
+              "noteFr": "serviette autour d’une poignée solide OU barre/anneaux"
             }
           ]
         },
@@ -1021,7 +1131,8 @@
                 "pullH",
                 "coreAntiExt"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Renegade rows (kettlebell)"
             },
             {
               "id": "kb-gorilla-rows",
@@ -1033,7 +1144,8 @@
               "patterns": [
                 "pullH"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Gorilla rows (kettlebell)"
             },
             {
               "id": "explosive-hip-hinges",
@@ -1047,7 +1159,8 @@
                 "hinge",
                 "plyo"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Hinges explosifs (kettlebell)"
             },
             {
               "id": "weighted-supermans",
@@ -1060,7 +1173,9 @@
               "patterns": [
                 "hinge"
               ],
-              "tier": 1
+              "tier": 1,
+              "nameFr": "Supermans lestés",
+              "noteFr": "petit sac à dos tenu au-dessus de la tête"
             },
             {
               "id": "kb-clean-and-press",
@@ -1073,7 +1188,8 @@
                 "pushV",
                 "hinge"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Clean & press kettlebell"
             },
             {
               "id": "weighted-pullups",
@@ -1085,7 +1201,9 @@
               "patterns": [
                 "pullV"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Tractions lestées",
+              "noteFr": "gilet lesté ou sac à dos"
             },
             {
               "id": "handstand-pushups-back",
@@ -1095,7 +1213,8 @@
               "patterns": [
                 "pushV"
               ],
-              "tier": 3
+              "tier": 3,
+              "nameFr": "Pompes en équilibre (handstand)"
             },
             {
               "id": "inverted-rows",
@@ -1108,7 +1227,9 @@
               "patterns": [
                 "pullH"
               ],
-              "tier": 2
+              "tier": 2,
+              "nameFr": "Rowing inversé",
+              "noteFr": "pieds surélevés ; gilet lesté optionnel"
             }
           ]
         },

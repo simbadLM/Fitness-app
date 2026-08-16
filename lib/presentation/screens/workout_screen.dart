@@ -192,8 +192,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
           for (final e in options)
             ListTile(
               leading: AnimatedPictogram(type: e.picto, size: 40),
-              title: Text(e.name),
-              subtitle: e.note != null ? Text(e.note!) : null,
+              title: Text(e.label),
+              subtitle: e.hint != null ? Text(e.hint!) : null,
               onTap: () => Navigator.of(context).pop(e),
             ),
         ],
@@ -302,7 +302,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
           Text('$_restRemaining',
               style: const TextStyle(fontSize: 80, fontWeight: FontWeight.w900)),
           const SizedBox(height: 8),
-          Text('Prochain : ${_current.exercise.name}',
+          Text('Prochain : ${_current.exercise.label}',
               style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
           const SizedBox(height: 24),
           OutlinedButton(
@@ -364,7 +364,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
             children: [
               Flexible(
                 child: Text(
-                  movement.exercise.name,
+                  movement.exercise.label,
                   textAlign: TextAlign.center,
                   style:
                       const TextStyle(fontSize: 24, fontWeight: FontWeight.w900),
@@ -380,14 +380,16 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> {
           const SizedBox(height: 4),
           Text(
             '${movement.group.nameFr}'
+            '${movement.exercise.nameFr != null ? ' · ${movement.exercise.name}' : ''}'
             '${movement.isFocus ? ' · focus' : ''}'
             '${movement.weighted ? ' · avec lest' : ''}',
-            style: TextStyle(color: scheme.onSurfaceVariant),
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
           ),
-          if (movement.exercise.note != null) ...[
+          if (movement.exercise.hint != null) ...[
             const SizedBox(height: 8),
             Text(
-              movement.exercise.note!,
+              movement.exercise.hint!,
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 13, color: scheme.onSurfaceVariant),
             ),
@@ -493,7 +495,7 @@ class _PreviewView extends StatelessWidget {
                       child: ListTile(
                         leading: AnimatedPictogram(
                             type: movement.exercise.picto, size: 44),
-                        title: Text(movement.exercise.name,
+                        title: Text(movement.exercise.label,
                             style:
                                 const TextStyle(fontWeight: FontWeight.w700)),
                         subtitle: Text([

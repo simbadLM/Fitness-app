@@ -74,6 +74,8 @@ class Exercise {
     required this.name,
     required this.picto,
     this.note,
+    this.nameFr,
+    this.noteFr,
     this.equipment = const [],
     this.type = ExerciseType.reps,
     this.patterns = const [],
@@ -81,11 +83,21 @@ class Exercise {
   });
 
   final String id;
+
+  /// Nomenclature anglaise usuelle (affichée en sous-titre).
   final String name;
   final String? note;
+
+  /// Nom et consigne affichés en priorité.
+  final String? nameFr;
+  final String? noteFr;
+
   final List<Equipment> equipment;
   final PictoType picto;
   final ExerciseType type;
+
+  String get label => nameFr ?? name;
+  String? get hint => noteFr ?? note;
 
   /// Schémas moteurs travaillés.
   final List<MovementPattern> patterns;
@@ -102,6 +114,8 @@ class Exercise {
         id: json['id'] as String,
         name: json['name'] as String,
         note: json['note'] as String?,
+        nameFr: json['nameFr'] as String?,
+        noteFr: json['noteFr'] as String?,
         equipment: [
           for (final e in (json['equipment'] as List? ?? const []))
             Equipment.values.byName(e as String),
