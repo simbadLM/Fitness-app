@@ -9,6 +9,7 @@ import '../../domain/content.dart';
 import '../../domain/coverage.dart';
 import '../../domain/models.dart';
 import '../../domain/workout_generator.dart';
+import '../palettes.dart';
 import '../pictograms.dart';
 import '../theme.dart';
 import '../widgets.dart';
@@ -635,7 +636,7 @@ class _WarmupSheetState extends State<_WarmupSheet> {
                               : Icons.circle_outlined,
                       size: 20,
                       color: _timer != null && i <= index
-                          ? AppTheme.turquoise
+                          ? context.colors.accent
                           : scheme.outlineVariant,
                     ),
                     const SizedBox(width: 10),

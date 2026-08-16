@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../app.dart';
 import '../../domain/gamification.dart';
 import '../../domain/models.dart';
+import '../palettes.dart';
 import '../theme.dart';
 
 /// Écran de récompense de fin de séance.
@@ -43,11 +44,11 @@ class SummaryScreen extends ConsumerWidget {
                   Center(
                     child: Text(
                       'Jour ${result.dayNumber} / 365',
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontFamily: AppTheme.displayFont,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
-                        color: AppTheme.or,
+                        color: context.colors.accent,
                       ),
                     ),
                   ),
@@ -289,7 +290,7 @@ class _BadgeTile extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       child: ListTile(
         leading: const Icon(Icons.military_tech_rounded,
-            color: AppTheme.gold, size: 32),
+            color: AppTheme.trophee, size: 32),
         title: Text(badge.title,
             style: const TextStyle(fontWeight: FontWeight.w800)),
         subtitle: Text(badge.description),

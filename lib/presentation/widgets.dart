@@ -57,7 +57,7 @@ class StreakFlame extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
         color: active
-            ? AppTheme.gold.withValues(alpha: 0.15)
+            ? AppTheme.flamme.withValues(alpha: 0.15)
             : Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
       ),

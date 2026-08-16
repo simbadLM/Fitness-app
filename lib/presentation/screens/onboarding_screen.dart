@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../app.dart';
 import '../../domain/content.dart';
 import '../../domain/models.dart';
+import '../palettes.dart';
 import '../theme.dart';
 
 const _weekdays = [
@@ -74,7 +75,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             const SizedBox(height: 24),
             ShaderMask(
               shaderCallback: (bounds) =>
-                  AppTheme.accentGradient.createShader(bounds),
+                  context.colors.gradient.createShader(bounds),
               child: const Text('365',
                   style: TextStyle(
                     fontFamily: AppTheme.displayFont,

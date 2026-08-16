@@ -6,6 +6,7 @@ import '../../data/db.dart';
 import '../../domain/content.dart';
 import '../../domain/coverage.dart';
 import '../../domain/gamification.dart';
+import '../palettes.dart';
 import '../theme.dart';
 
 class StatsTab extends ConsumerWidget {
@@ -122,7 +123,7 @@ class StatsTab extends ConsumerWidget {
                           Icons.military_tech_rounded,
                           size: 18,
                           color: (player?.badges.contains(badge.id) ?? false)
-                              ? AppTheme.gold
+                              ? AppTheme.trophee
                               : scheme.outlineVariant,
                         ),
                         label: Text(
@@ -215,11 +216,11 @@ class _CoverageSection extends ConsumerWidget {
                 ),
                 Text(
                   '${orderedAccessible.where(covered.contains).length}/${orderedAccessible.length}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontFamily: AppTheme.displayFont,
                     fontSize: 20,
                     fontWeight: FontWeight.w700,
-                    color: AppTheme.turquoise,
+                    color: context.colors.accent,
                   ),
                 ),
               ],
@@ -244,7 +245,7 @@ class _CoverageSection extends ConsumerWidget {
                             : Icons.radio_button_unchecked_rounded,
                         size: 18,
                         color: covered.contains(p)
-                            ? AppTheme.turquoise
+                            ? context.colors.accent
                             : scheme.outlineVariant,
                       ),
                       label: Text(

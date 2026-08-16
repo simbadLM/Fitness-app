@@ -7,6 +7,7 @@ import '../../domain/content.dart';
 import '../../domain/gamification.dart';
 import '../../domain/journey.dart';
 import '../../domain/models.dart';
+import '../palettes.dart';
 import '../theme.dart';
 import '../widgets.dart';
 import 'settings_tab.dart';
@@ -87,7 +88,7 @@ class _HomeTab extends ConsumerWidget {
             children: [
               ShaderMask(
                 shaderCallback: (bounds) =>
-                    AppTheme.accentGradient.createShader(bounds),
+                    context.colors.gradient.createShader(bounds),
                 child: const Text('365',
                     style: TextStyle(
                       fontFamily: AppTheme.displayFont,
@@ -182,10 +183,10 @@ class _DayHero extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(20),
         border: Border.all(
-            color: AppTheme.turquoise.withValues(alpha: 0.45), width: 1),
+            color: context.colors.accent.withValues(alpha: 0.45), width: 1),
         boxShadow: [
           BoxShadow(
-            color: AppTheme.bleu.withValues(alpha: 0.25),
+            color: context.colors.accentB.withValues(alpha: 0.25),
             blurRadius: 24,
             offset: const Offset(0, 8),
           ),
@@ -208,7 +209,7 @@ class _DayHero extends StatelessWidget {
             children: [
               ShaderMask(
                 shaderCallback: (bounds) =>
-                    AppTheme.accentGradient.createShader(bounds),
+                    context.colors.gradient.createShader(bounds),
                 child: Text('$dayNumber',
                     style: const TextStyle(
                       fontFamily: AppTheme.displayFont,
@@ -248,8 +249,8 @@ class _DayHero extends StatelessWidget {
                       (dayNumber / Journey.totalDays).clamp(0.004, 1.0),
                   child: Container(
                     height: 6,
-                    decoration: const BoxDecoration(
-                        gradient: AppTheme.accentGradient),
+                    decoration:
+                        BoxDecoration(gradient: context.colors.gradient),
                   ),
                 ),
               ],
@@ -325,9 +326,10 @@ class _JourneyTimeline extends StatelessWidget {
                                   height: 5,
                                   decoration: BoxDecoration(
                                     color: s.arc < arc
-                                        ? AppTheme.or
+                                        ? context.colors.accent
                                         : s.arc == arc
-                                            ? AppTheme.or.withValues(alpha: 0.55)
+                                            ? context.colors.accent
+                                                .withValues(alpha: 0.55)
                                             : scheme.surfaceContainerHighest,
                                     borderRadius: BorderRadius.circular(3),
                                   ),
@@ -347,7 +349,7 @@ class _JourneyTimeline extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: scheme.onSurface,
                             borderRadius: BorderRadius.circular(5),
-                            border: Border.all(color: AppTheme.or, width: 1.4),
+                            border: Border.all(color: context.colors.accent, width: 1.4),
                           ),
                         ),
                       ),
@@ -395,11 +397,12 @@ class _QuestCard extends StatelessWidget {
             : 'Jour de repos planifié — mais rien ne t\'arrête.';
     return Container(
       decoration: BoxDecoration(
-        gradient: hasBoss ? AppTheme.bossGradient : AppTheme.accentGradient,
+        gradient:
+            hasBoss ? context.colors.bossGradient : context.colors.gradient,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: (hasBoss ? AppTheme.carmin : AppTheme.turquoise)
+            color: (hasBoss ? AppTheme.carmin : context.colors.accent)
                 .withValues(alpha: 0.35),
             blurRadius: 20,
             offset: const Offset(0, 6),

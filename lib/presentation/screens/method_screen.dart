@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../domain/content.dart';
 import '../../domain/gamification.dart';
-import '../theme.dart';
+import '../palettes.dart';
 
 /// Pédagogie de l'entraînement : chaque mécanisme de l'app expliqué, plus
 /// les fondamentaux qui se jouent hors de l'app. Lecture optionnelle.
@@ -105,8 +105,8 @@ class MethodScreen extends StatelessWidget {
                           margin: const EdgeInsets.only(top: 6),
                           width: 6,
                           height: 6,
-                          decoration: const BoxDecoration(
-                              color: AppTheme.turquoise,
+                          decoration: BoxDecoration(
+                              color: context.colors.accent,
                               shape: BoxShape.circle),
                         ),
                         const SizedBox(width: 10),
@@ -197,7 +197,7 @@ class _MethodTile extends StatelessWidget {
       child: ExpansionTile(
         shape: const Border(),
         collapsedShape: const Border(),
-        leading: Icon(icon, color: AppTheme.turquoise),
+        leading: Icon(icon, color: context.colors.accent),
         title: Text(title,
             style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 15)),
         childrenPadding: const EdgeInsets.fromLTRB(16, 0, 16, 16),

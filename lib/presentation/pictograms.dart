@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../domain/content.dart';
-import 'theme.dart';
+import 'palettes.dart';
 
 /// Pictogramme animé : silhouette vectorielle vue de profil, deux bras et
 /// deux jambes (membres arrière estompés), tête pleine, sol et accessoires
@@ -59,6 +59,7 @@ class _AnimatedPictogramState extends State<AnimatedPictogram>
                 Curves.easeInOutSine.transform(_controller.value)),
             spec: spec,
             color: color,
+            accent: context.colors.accent,
           ),
         ),
       ),
@@ -150,11 +151,13 @@ class _FigurePainter extends CustomPainter {
     required this.pose,
     required this.spec,
     required this.color,
+    required this.accent,
   });
 
   final _Pose pose;
   final _Spec spec;
   final Color color;
+  final Color accent;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -174,7 +177,7 @@ class _FigurePainter extends CustomPainter {
       ..strokeJoin = StrokeJoin.round
       ..style = PaintingStyle.stroke;
     final propPaint = Paint()
-      ..color = AppTheme.turquoise.withValues(alpha: 0.9)
+      ..color = accent.withValues(alpha: 0.9)
       ..strokeWidth = w * 0.028
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
@@ -228,7 +231,7 @@ class _FigurePainter extends CustomPainter {
       final h = at(pose.hand);
       final r = w * 0.055;
       canvas.drawCircle(
-          h + Offset(0, r * 1.4), r, Paint()..color = AppTheme.turquoise);
+          h + Offset(0, r * 1.4), r, Paint()..color = accent);
       canvas.drawArc(
           Rect.fromCircle(center: h + Offset(0, r * 0.4), radius: r * 0.55),
           3.14, 3.14, false, propPaint);
@@ -243,7 +246,9 @@ class _FigurePainter extends CustomPainter {
 
   @override
   bool shouldRepaint(_FigurePainter oldDelegate) =>
-      oldDelegate.pose != pose || oldDelegate.color != color;
+      oldDelegate.pose != pose ||
+      oldDelegate.color != color ||
+      oldDelegate.accent != accent;
 }
 
 /// Poses clés par famille. Coordonnées normalisées, figure vue de profil.
